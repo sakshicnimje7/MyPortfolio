@@ -71,3 +71,14 @@
   animation: float 4s ease-in-out infinite;
 }
 
+.hero-bg {
+  background: radial-gradient(ellipse 60% 60% at 25% 50%, rgba(240, 212, 168, 0.45) 0%, transparent 60%), #f7f5ef;
+}
+
+@media (max-width: 767px) {
+  .hero-bg {
+    background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(240, 212, 168, 0.5) 0%, transparent 60%), #f7f5ef !important;
+  }
+}
+
+

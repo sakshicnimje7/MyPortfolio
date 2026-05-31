@@ -2,121 +2,57 @@
 
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 
-// Dynamically load the R3F Canvas component to prevent server rendering and hydration errors
+// Dynamically load the CatScene component with ssr: false to prevent document/window check errors during SSR
 const CatScene = dynamic(() => import('@/components/3d/CatScene'), {
   ssr: false,
   loading: () => (
     <div className="w-full h-full flex items-center justify-center font-mono text-xs opacity-60">
-      Loading 3D Cat...
+      Loading Cat...
     </div>
   ),
 });
 
 export default function Home() {
+  // Stagger Container for Name slideUp animations
+  const nameContainerVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.15,
+      },
+    },
+  };
+
+  const wordVariants = {
+    hidden: { y: '100%' },
+    visible: {
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Smooth out-expo easing
+      },
+    },
+  };
+
   return (
-    <div className="flex flex-col min-h-screen font-dm text-ink dark:text-cream bg-cream dark:bg-ink overflow-x-hidden">
+    <div className="hero-bg flex flex-col min-h-screen overflow-x-hidden relative">
       
-      {/* Hero Section Container */}
-      <section className="relative w-full min-h-screen flex flex-col md:flex-row items-center justify-between">
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col md:flex-row items-center justify-center w-full min-h-screen">
         
-        {/* Left Side: Hero Text Content */}
-        <div className="w-full md:w-[50vw] min-h-[50vh] md:min-h-screen flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 py-16 gap-8">
-          <div className="flex flex-col gap-4">
-            <span className="font-mono text-xs uppercase tracking-widest text-sage-mid dark:text-sage-light">
-              Creative Developer & Voxel Artist
-            </span>
-            <h1 className="font-cormorant text-5xl sm:text-6xl lg:text-7xl font-semibold text-forest dark:text-sage-light tracking-tight leading-[1.05]">
-              Sakshi Nimje
-            </h1>
-            <p className="text-base sm:text-lg lg:text-xl text-ink/80 dark:text-cream/80 leading-relaxed font-light max-w-lg">
-              Crafting premium interactive portfolios, 3D web experiences, and pixel-art designs with React, Three.js, and GSAP.
-            </p>
+        {/* Left Column: Cat Scene */}
+        {/* Desktop: 50vw wide, 100vh tall, vertically centered. Mobile: stacked on top, 40vh height */}
+        <div className="w-full md:w-[50vw] h-[45vh] md:h-screen relative flex items-center justify-center pt-12 md:pt-0">
+          
+          {/* 3D Cat Scene (Desktop only) */}
+          <div className="hidden md:block w-full h-full">
+            <CatScene />
           </div>
 
-          {/* Color Palette Chips */}
-          <div className="flex flex-wrap gap-3">
-            <span className="px-3 py-1.5 bg-cream-2 dark:bg-cream-3/20 rounded-md border border-cream-3 dark:border-cream-3/30 font-mono text-xs">
-              cream: #f7f5ef
-            </span>
-            <span className="px-3 py-1.5 bg-sage text-cream dark:text-ink rounded-md font-mono text-xs">
-              sage: #8fa68a
-            </span>
-            <span className="px-3 py-1.5 bg-forest text-cream rounded-md font-mono text-xs">
-              forest: #3d5e3b
-            </span>
-            <span className="px-3 py-1.5 bg-amber text-cream rounded-md font-mono text-xs">
-              amber: #c4862a
-            </span>
-            <span className="px-3 py-1.5 bg-ink text-cream dark:bg-cream dark:text-ink rounded-md font-mono text-xs">
-              ink: #1a1a16
-            </span>
-          </div>
-
-          {/* Call to Actions */}
-          <div className="flex flex-wrap gap-4 items-center mt-2">
-            <a
-              href="https://github.com/sakshicnimje7/MyPortfolio"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="magnetic"
-              className="px-6 py-3 bg-forest hover:bg-sage-mid text-cream font-medium rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-forest/20 text-sm sm:text-base"
-            >
-              View Repository
-            </a>
-            
-            <button
-              onClick={() => {
-                const doc = document.documentElement;
-                if (doc.classList.contains('dark')) {
-                  doc.classList.remove('dark');
-                } else {
-                  doc.classList.add('dark');
-                }
-              }}
-              data-cursor="magnetic"
-              className="px-6 py-3 border border-sage-mid dark:border-sage-light text-forest dark:text-sage-light hover:bg-sage-light/10 font-medium rounded-full transition-all duration-300 text-sm sm:text-base"
-            >
-              Toggle Theme
-            </button>
-          </div>
-
-          {/* Interactive Cards for Custom Cursor Verification */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 max-w-lg">
-            <div 
-              data-cursor="magnetic"
-              className="p-5 rounded-2xl bg-cream-2/50 dark:bg-cream-3/5 border border-cream-3 dark:border-cream-3/10 flex flex-col gap-1 hover:border-amber transition-colors duration-300"
-            >
-              <h3 className="font-cormorant text-xl font-semibold text-forest dark:text-sage-light">
-                Magnetic Hover
-              </h3>
-              <p className="text-xs opacity-75 font-light">
-                Hover over me to expand the cursor into a warm amber ring.
-              </p>
-            </div>
-
-            <div 
-              data-cursor="text"
-              className="p-5 rounded-2xl bg-cream-2/50 dark:bg-cream-3/5 border border-cream-3 dark:border-cream-3/10 flex flex-col gap-1 hover:border-sage transition-colors duration-300"
-            >
-              <h3 className="font-cormorant text-xl font-semibold text-forest dark:text-sage-light">
-                Interactive Text
-              </h3>
-              <p className="text-xs opacity-75 font-light">
-                Hover over me to expand the cursor and reveal the centered label &quot;VIEW&quot;.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Right Side: 3D Cat Scene Container */}
-        <div className="hidden md:block md:w-[50vw] md:h-screen relative flex-shrink-0">
-          <CatScene />
-        </div>
-
-        {/* Mobile 2D Fallback Cat Image (displayed under md breakpoint) */}
-        <div className="block md:hidden w-full h-[40vh] flex items-center justify-center relative mt-4 pb-16">
-          <div className="relative w-64 h-64 animate-float">
+          {/* 2D Floating Image Fallback (Mobile only) */}
+          <div className="block md:hidden w-56 h-56 relative animate-float">
             <Image
               src="/cat.png"
               alt="Voxel Cat Mobile Fallback"
@@ -125,14 +61,117 @@ export default function Home() {
               priority
             />
           </div>
+
         </div>
 
-      </section>
+        {/* Right Column: Text Content */}
+        {/* Desktop: 50vw wide, 100vh tall, vertically centered. Mobile: bottom stacked */}
+        <div className="w-full md:w-[50vw] min-h-[55vh] md:min-h-screen flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 py-8 md:py-0 gap-6 md:gap-8 z-10">
+          
+          {/* 1. Small Label: fadeUp entry, delay 0.2s */}
+          <motion.span
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="font-dm text-xs tracking-[0.12em] text-[#8fa68a] uppercase font-medium"
+          >
+            SAP Certified · Full Stack · Open to Work
+          </motion.span>
 
-      {/* Footer */}
-      <footer className="p-6 text-center border-t border-cream-3/50 dark:border-cream-3/10 font-mono text-xs opacity-60 mt-auto">
-        © 2026 Sakshi Portfolio. Designed with Next.js 14, Tailwind CSS, GSAP, & React Three Fiber.
-      </footer>
+          {/* 2. Name: Sakshi Nimje on two lines, slides up stagger 0.15s */}
+          <motion.div
+            variants={nameContainerVariants}
+            initial="hidden"
+            animate="visible"
+            className="flex flex-col"
+          >
+            {/* Sakshi line */}
+            <div className="overflow-hidden block h-[1.1em]">
+              <motion.h1
+                variants={wordVariants}
+                className="font-cormorant font-semibold text-[#1a1a16] leading-[1]"
+                style={{ fontSize: 'clamp(56px, 9vw, 120px)' }}
+              >
+                Sakshi
+              </motion.h1>
+            </div>
+            
+            {/* Nimje line */}
+            <div className="overflow-hidden block h-[1.25em] relative">
+              <motion.h1
+                variants={wordVariants}
+                className="font-cormorant font-semibold text-[#1a1a16] leading-[1] inline-block relative pb-2 pr-1"
+                style={{ fontSize: 'clamp(56px, 9vw, 120px)' }}
+              >
+                Nimje
+                {/* Posited amber underline decoration */}
+                <div 
+                  className="absolute left-0 bottom-[12%] w-full h-[6px] sm:h-[8px] bg-[#c4862a]/70 rounded-full -z-10"
+                />
+              </motion.h1>
+            </div>
+          </motion.div>
+
+          {/* 3. One-liner: fadeIn entry, delay 0.6s */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="font-dm font-light text-[1.2rem] text-[#5c7a5a] max-w-[380px] leading-relaxed"
+          >
+            I engineer enterprise backends and animate the web.
+          </motion.p>
+
+          {/* 4. Two buttons: magnetic hovers, delay 0.8s */}
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="flex flex-wrap gap-4 mt-2"
+          >
+            <a
+              href="#work"
+              data-cursor="magnetic"
+              className="px-7 py-3 bg-[#3d5e3b] text-[#f7f5ef] hover:bg-[#5c7a5a] font-dm text-[14px] font-medium rounded-[2px] transition-colors duration-300 select-none text-center min-w-[140px]"
+            >
+              See my work
+            </a>
+            
+            <a
+              href="#contact"
+              data-cursor="magnetic"
+              className="px-7 py-3 border border-[#c4862a] text-[#c4862a] hover:bg-[#f0d4a8]/20 font-dm text-[14px] font-medium rounded-[2px] transition-all duration-300 select-none text-center min-w-[140px]"
+            >
+              Get in touch
+            </a>
+          </motion.div>
+
+        </div>
+
+      </main>
+
+      {/* 5. Scroll Indicator: delay 1.2s */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 md:left-auto md:right-16 transform -translate-x-1/2 md:translate-x-0 flex flex-col items-center gap-3 z-10"
+      >
+        <span className="font-dm text-[11px] tracking-[0.15em] text-[#8fa68a] uppercase select-none">
+          scroll to explore
+        </span>
+        <div className="w-[1.5px] h-10 bg-[#8fa68a]/20 relative overflow-hidden rounded-full">
+          <motion.div
+            animate={{ y: ['-100%', '100%'] }}
+            transition={{
+              repeat: Infinity,
+              duration: 1.8,
+              ease: 'easeInOut',
+            }}
+            className="absolute top-0 left-0 w-full h-1/2 bg-[#8fa68a]"
+          />
+        </div>
+      </motion.div>
 
     </div>
   );
