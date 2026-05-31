@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
-import CustomCursor from "@/components/CustomCursor";
+import CustomCursor from "@/components/ui/CustomCursor";
 import PageLoader from "@/components/PageLoader";
 
 const cormorant = Cormorant_Garamond({
