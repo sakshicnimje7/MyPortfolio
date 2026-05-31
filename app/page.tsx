@@ -1,100 +1,63 @@
-import Image from "next/image";
+'use client';
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="https://nextjs.org/icons/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+    <div className="flex flex-col min-h-screen font-dm text-ink dark:text-cream bg-cream dark:bg-ink">
+      <main className="flex-1 flex flex-col items-center justify-center p-8 text-center max-w-4xl mx-auto gap-8">
+        <h1 className="font-cormorant text-5xl md:text-7xl font-semibold text-forest dark:text-sage-light tracking-tight">
+          Sakshi Portfolio
+        </h1>
+        
+        <p className="text-lg md:text-xl text-ink/80 dark:text-cream/80 leading-relaxed font-light">
+          A premium portfolio template featuring smooth interactions, 3D graphics, and modular architecture.
+        </p>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
+        <div className="flex flex-wrap gap-4 justify-center">
+          <span className="px-4 py-2 bg-cream-2 dark:bg-cream-3/20 rounded-md border border-cream-3 dark:border-cream-3/30 font-mono text-sm">
+            cream: #f7f5ef
+          </span>
+          <span className="px-4 py-2 bg-sage text-cream dark:text-ink rounded-md font-mono text-sm">
+            sage: #8fa68a
+          </span>
+          <span className="px-4 py-2 bg-forest text-cream rounded-md font-mono text-sm">
+            forest: #3d5e3b
+          </span>
+          <span className="px-4 py-2 bg-amber text-cream rounded-md font-mono text-sm">
+            amber: #c4862a
+          </span>
+          <span className="px-4 py-2 bg-ink text-cream dark:bg-cream dark:text-ink rounded-md font-mono text-sm">
+            ink: #1a1a16
+          </span>
+        </div>
+
+        <div className="mt-8 flex gap-4">
           <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://nextjs.org/docs"
             target="_blank"
             rel="noopener noreferrer"
+            className="px-6 py-3 bg-forest hover:bg-sage-mid text-cream font-medium rounded-full transition-all duration-300 transform hover:-translate-y-0.5 shadow-md shadow-forest/20"
           >
-            <Image
-              className="dark:invert"
-              src="https://nextjs.org/icons/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
+            Explore Docs
           </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          
+          <button
+            onClick={() => {
+              const doc = document.documentElement;
+              if (doc.classList.contains('dark')) {
+                doc.classList.remove('dark');
+              } else {
+                doc.classList.add('dark');
+              }
+            }}
+            className="px-6 py-3 border border-sage-mid dark:border-sage-light text-forest dark:text-sage-light hover:bg-sage-light/10 font-medium rounded-full transition-all duration-300"
           >
-            Read our docs
-          </a>
+            Toggle Theme
+          </button>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="https://nextjs.org/icons/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      
+      <footer className="p-6 text-center border-t border-cream-3/50 dark:border-cream-3/10 font-mono text-xs opacity-60">
+        © 2026 Sakshi Portfolio. Designed with Next.js, Tailwind CSS, & Framer Motion.
       </footer>
     </div>
   );

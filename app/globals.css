@@ -3,25 +3,57 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f7f5ef;
+  --foreground: #1a1a16;
+
+  --cream: #f7f5ef;
+  --cream-2: #eae8df;
+  --cream-3: #d4d0c4;
+  
+  --sage-light: #a8c4a2;
+  --sage: #8fa68a;
+  --sage-mid: #5c7a5a;
+  
+  --forest: #3d5e3b;
+  
+  --amber: #c4862a;
+  --amber-light: #f0d4a8;
+  
+  --ink: #1a1a16;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+.dark {
+  --background: #1a1a16;
+  --foreground: #f7f5ef;
+
+  --cream: #1a1a16;
+  --cream-2: #24241e;
+  --cream-3: #2d2d26;
+
+  --sage-light: #5c7a5a;
+  --sage: #8fa68a;
+  --sage-mid: #a8c4a2;
+
+  --forest: #a8c4a2;
+
+  --amber: #f0d4a8;
+  --amber-light: #c4862a;
+
+  --ink: #f7f5ef;
+}
+
+@layer base {
+  * {
+    border-color: var(--cream-3);
   }
-}
+  
+  html {
+    background-color: #f7f5ef; /* Set HTML background directly as requested */
+  }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+  body {
+    color: var(--foreground);
+    background-color: var(--background);
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
