@@ -3,7 +3,7 @@ import { Cormorant_Garamond, DM_Sans, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import CustomCursor from "@/components/ui/CustomCursor";
-import PageLoader from "@/components/PageLoader";
+import PageLoader from "@/components/ui/PageLoader";
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
@@ -47,8 +47,8 @@ export default function RootLayout({
           enableSystem={false}
           disableTransitionOnChange
         >
-          <CustomCursor />
           <PageLoader />
+          <CustomCursor />
           {children}
         </ThemeProvider>
       </body>
