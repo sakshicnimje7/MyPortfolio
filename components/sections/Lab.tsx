@@ -195,7 +195,7 @@ export default function Lab() {
         
         {/* Section Header */}
         <div className="flex flex-col gap-3 max-w-2xl">
-          <h2 className="font-cormorant font-semibold text-5xl sm:text-6xl text-[#3d5e3b] leading-tight">
+          <h2 className="font-cormorant font-semibold text-5xl sm:text-6xl text-transparent bg-clip-text bg-gradient-to-r from-[#f7f5ef] to-[#a8c4a2] leading-tight">
             The Lab
           </h2>
           <p className="font-dm font-light text-base sm:text-lg text-[#8fa68a] leading-relaxed">
