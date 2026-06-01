@@ -10,10 +10,35 @@ generator client {
 model Project {
   id          String   @id @default(uuid())
   title       String
-  category    String   // "SAP" | "Java" | "AI" | "Frontend"
+  slug        String   @unique
+  description String
   shortDesc   String
   tags        String   // Comma-separated list of tags
-  gitHubLink  String?
-  viewLink    String
+  category    String   // "SAP" | "Java" | "AI" | "Frontend"
+  liveUrl     String
+  githubUrl   String?
+  featured    Boolean  @default(false)
+  order       Int      @default(0)
   createdAt   DateTime @default(now())
+}
+
+model BlogPost {
+  id        String   @id @default(uuid())
+  title     String
+  slug      String   @unique
+  tags      String   // Comma-separated list of tags
+  excerpt   String
+  content   String   // Large text (MDX string)
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Achievement {
+  id        String   @id @default(uuid())
+  title     String
+  issuer    String
+  year      String?
+  category  String   // "SAP" | "Infosys"
+  certified Boolean  @default(false)
+  createdAt DateTime @default(now())
 }

@@ -1,49 +1,49 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface Certification {
+  id: string;
   title: string;
   issuer: string;
-  year?: string;
-  category: 'SAP' | 'Infosys';
-  certifiedTag?: boolean;
+  year?: string | null;
+  category: string;
+  certified: boolean;
 }
 
-const certifications: Certification[] = [
-  {
-    title: "SAP Certified Associate — Back-End Developer — ABAP Cloud",
-    issuer: "SAP",
-    year: "2025",
-    category: "SAP",
-    certifiedTag: true,
-  },
-  {
-    title: "DSA Using Java",
-    issuer: "Infosys",
-    category: "Infosys",
-  },
-  {
-    title: "Java Foundation Certification",
-    issuer: "Infosys",
-    category: "Infosys",
-  },
-  {
-    title: "Database Management Systems",
-    issuer: "Infosys",
-    category: "Infosys",
-  },
-  {
-    title: "Agile Scrum in Practice",
-    issuer: "Infosys",
-    category: "Infosys",
-  },
-];
-
 export default function Certifications() {
-  const sapCert = certifications[0];
-  const otherCerts = certifications.slice(1);
+  const [certifications, setCertifications] = useState<Certification[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/achievements')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setCertifications(data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch certifications:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="w-full min-h-[300px] flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
+        Loading Certifications...
+      </div>
+    );
+  }
+
+  const sapCerts = certifications.filter(c => c.category.toUpperCase() === 'SAP');
+  const sapCert = sapCerts.length > 0 ? sapCerts[0] : null;
+  const otherCerts = sapCert 
+    ? certifications.filter(c => c.id !== sapCert.id)
+    : certifications;
 
   return (
     <section id="certifications" className="relative z-20 py-24 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
@@ -60,45 +60,49 @@ export default function Certifications() {
         </div>
 
         {/* SAP Hero Certification */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="flex justify-center w-full"
-        >
-          <div
-            data-cursor="magnetic"
-            className="w-[240px] h-[280px] rounded-lg border-[1.5px] border-[#c4862a] bg-gradient-to-br from-[#f0d4a8]/50 to-[#f7f5ef] p-6 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative group select-none hover:-translate-y-1.5"
+        {sapCert && (
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="flex justify-center w-full"
           >
-            {/* Top Bar with Badge Tag */}
-            <div className="flex items-center justify-between w-full">
-              <span className="px-2 py-0.5 bg-[#3d5e3b] text-[#f7f5ef] font-mono text-[9px] uppercase tracking-wider rounded">
-                SAP
-              </span>
-              <span className="text-[10px] font-dm text-[#c4862a] font-semibold uppercase tracking-widest flex items-center gap-0.5">
-                ★ Certified
-              </span>
-            </div>
+            <div
+              data-cursor="magnetic"
+              className="w-[240px] h-[280px] rounded-lg border-[1.5px] border-[#c4862a] bg-gradient-to-br from-[#f0d4a8]/50 to-[#f7f5ef] p-6 shadow-md hover:shadow-lg transition-all duration-300 flex flex-col justify-between relative group select-none hover:-translate-y-1.5"
+            >
+              {/* Top Bar with Badge Tag */}
+              <div className="flex items-center justify-between w-full">
+                <span className="px-2 py-0.5 bg-[#3d5e3b] text-[#f7f5ef] font-mono text-[9px] uppercase tracking-wider rounded">
+                  {sapCert.category}
+                </span>
+                {sapCert.certified && (
+                  <span className="text-[10px] font-dm text-[#c4862a] font-semibold uppercase tracking-widest flex items-center gap-0.5">
+                    ★ Certified
+                  </span>
+                )}
+              </div>
 
-            {/* Title */}
-            <div className="flex-1 flex items-center justify-center py-4">
-              <h3 className="font-dm font-semibold text-[13px] text-[#1a1a16] text-center leading-relaxed group-hover:text-[#3d5e3b] transition-colors px-1">
-                {sapCert.title}
-              </h3>
-            </div>
+              {/* Title */}
+              <div className="flex-1 flex items-center justify-center py-4">
+                <h3 className="font-dm font-semibold text-[13px] text-[#1a1a16] text-center leading-relaxed group-hover:text-[#3d5e3b] transition-colors px-1">
+                  {sapCert.title}
+                </h3>
+              </div>
 
-            {/* Bottom Issuer details */}
-            <div className="border-t border-[#d4d0c4]/45 pt-3.5 flex items-center justify-between">
-              <span className="font-mono text-[10px] uppercase text-[#5c7a5a]">
-                SAP SE
-              </span>
-              <span className="font-mono text-[10px] text-[#5c7a5a]">
-                {sapCert.year}
-              </span>
+              {/* Bottom Issuer details */}
+              <div className="border-t border-[#d4d0c4]/45 pt-3.5 flex items-center justify-between">
+                <span className="font-mono text-[10px] uppercase text-[#5c7a5a]">
+                  {sapCert.issuer}
+                </span>
+                <span className="font-mono text-[10px] text-[#5c7a5a]">
+                  {sapCert.year}
+                </span>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         {/* Other Certifications Grid */}
         <div className="w-full mt-4">

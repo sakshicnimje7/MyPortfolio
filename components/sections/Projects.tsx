@@ -6,11 +6,15 @@ import * as THREE from 'three';
 interface Project {
   id: string;
   title: string;
-  category: string;
+  slug: string;
+  description: string;
   shortDesc: string;
   tags: string; // Comma-separated list
-  gitHubLink: string | null;
-  viewLink: string;
+  category: string;
+  liveUrl: string;
+  githubUrl: string | null;
+  featured: boolean;
+  order: number;
 }
 
 interface ProjectsProps {
@@ -277,9 +281,9 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
       {/* Card Footer */}
       <div className="px-5 pb-5 pt-3 border-t border-[#d4d0c4]/30 flex items-center justify-between">
-        {project.gitHubLink ? (
+        {project.githubUrl ? (
           <a
-            href={project.gitHubLink}
+            href={project.githubUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="font-dm text-[13px] font-medium text-[#c4862a] hover:text-[#3d5e3b] transition-colors"
@@ -293,7 +297,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         )}
 
         <a
-          href={project.viewLink}
+          href={project.liveUrl}
           className="font-dm text-[13px] font-medium text-[#c4862a] hover:text-[#3d5e3b] transition-colors flex items-center gap-1"
         >
           View project →

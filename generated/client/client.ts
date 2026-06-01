@@ -46,3 +46,13 @@ export { Prisma }
  * 
  */
 export type Project = Prisma.ProjectModel
+/**
+ * Model BlogPost
+ * 
+ */
+export type BlogPost = Prisma.BlogPostModel
+/**
+ * Model Achievement
+ * 
+ */
+export type Achievement = Prisma.AchievementModel

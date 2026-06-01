@@ -51,7 +51,9 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
-  Project: 'Project'
+  Project: 'Project',
+  BlogPost: 'BlogPost',
+  Achievement: 'Achievement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -70,15 +72,46 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const ProjectScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  category: 'category',
+  slug: 'slug',
+  description: 'description',
   shortDesc: 'shortDesc',
   tags: 'tags',
-  gitHubLink: 'gitHubLink',
-  viewLink: 'viewLink',
+  category: 'category',
+  liveUrl: 'liveUrl',
+  githubUrl: 'githubUrl',
+  featured: 'featured',
+  order: 'order',
   createdAt: 'createdAt'
 } as const
 
 export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeof ProjectScalarFieldEnum]
+
+
+export const BlogPostScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  tags: 'tags',
+  excerpt: 'excerpt',
+  content: 'content',
+  published: 'published',
+  createdAt: 'createdAt'
+} as const
+
+export type BlogPostScalarFieldEnum = (typeof BlogPostScalarFieldEnum)[keyof typeof BlogPostScalarFieldEnum]
+
+
+export const AchievementScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  issuer: 'issuer',
+  year: 'year',
+  category: 'category',
+  certified: 'certified',
+  createdAt: 'createdAt'
+} as const
+
+export type AchievementScalarFieldEnum = (typeof AchievementScalarFieldEnum)[keyof typeof AchievementScalarFieldEnum]
 
 
 export const SortOrder = {

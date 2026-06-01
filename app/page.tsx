@@ -55,14 +55,28 @@ const Certifications = dynamic(() => import('@/components/sections/Certification
   ),
 });
 
+// Dynamically load the Lab component to prevent SSR window reference issues
+const Lab = dynamic(() => import('@/components/sections/Lab'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#1b201b] border-t border-[#3d5e3b]/30">
+      Loading The Lab...
+    </div>
+  ),
+});
+
 interface Project {
   id: string;
   title: string;
-  category: string;
+  slug: string;
+  description: string;
   shortDesc: string;
   tags: string;
-  gitHubLink: string | null;
-  viewLink: string;
+  category: string;
+  liveUrl: string;
+  githubUrl: string | null;
+  featured: boolean;
+  order: number;
 }
 
 export default function Home() {
@@ -247,6 +261,9 @@ export default function Home() {
 
       {/* Experience Section */}
       <Experience />
+
+      {/* Lab Section */}
+      <Lab />
 
       {/* Projects Section */}
       {loading ? (
