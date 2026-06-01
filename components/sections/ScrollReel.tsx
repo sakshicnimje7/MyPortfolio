@@ -79,12 +79,28 @@ export default function ScrollReel() {
 
     // Only apply scroll-driven clip-path reveals on desktop viewports (>= 768px)
     mm.add('(min-width: 768px)', () => {
-      // 1. Set initial states for overlapping panels
-      gsap.set([panel2Ref.current, panel3Ref.current, panel4Ref.current], {
+      const p2 = panel2Ref.current;
+      const p3 = panel3Ref.current;
+      const p4 = panel4Ref.current;
+      if (!p2 || !p3 || !p4) return;
+
+      // 1. Set initial states for overlapping panels and their contents
+      gsap.set([p2, p3, p4], {
         clipPath: 'inset(6% 5% 6% 5% round 20px)',
         opacity: 0,
         pointerEvents: 'none',
       });
+
+      // Initial state of contents
+      gsap.set(p2.querySelector('.panel-text-col'), { opacity: 0, y: 40 });
+      gsap.set(p2.querySelectorAll('.panel-bubble'), { opacity: 0, scale: 0.3 });
+
+      gsap.set(p3.querySelector('.panel-text-col'), { opacity: 0, y: 40 });
+      gsap.set(p3.querySelectorAll('.panel-pill'), { opacity: 0, x: -15 });
+      gsap.set(p3.querySelectorAll('.panel-bubble'), { opacity: 0, scale: 0.3 });
+
+      gsap.set(p4.querySelector('.panel4-title'), { opacity: 0, y: 50 });
+      gsap.set(p4.querySelector('.panel4-btn'), { opacity: 0, scale: 0.8 });
 
       // 2. Create ScrollTrigger Timeline scrubbing through the track with native GSAP pinning
       const tl = gsap.timeline({
@@ -99,39 +115,87 @@ export default function ScrollReel() {
       });
 
       // --- PANEL 2 REVEAL ---
-      tl.to(panel2Ref.current, {
+      tl.to(p2, {
         opacity: 1,
         pointerEvents: 'auto',
         duration: 0.05,
       })
-      .to(panel2Ref.current, {
+      .to(p2, {
         clipPath: 'inset(0% 0% 0% 0% round 0px)',
         duration: 0.6,
+        ease: 'power2.inOut',
       })
+      .to(p2.querySelector('.panel-text-col'), {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        ease: 'power2.out',
+      }, '-=0.45')
+      .to(p2.querySelectorAll('.panel-bubble'), {
+        opacity: 1,
+        scale: 1,
+        stagger: 0.03,
+        duration: 0.5,
+        ease: 'back.out(1.5)',
+      }, '-=0.35')
       .to({}, { duration: 0.35 }); // Hold state
 
       // --- PANEL 3 REVEAL ---
-      tl.to(panel3Ref.current, {
+      tl.to(p3, {
         opacity: 1,
         pointerEvents: 'auto',
         duration: 0.05,
       })
-      .to(panel3Ref.current, {
+      .to(p3, {
         clipPath: 'inset(0% 0% 0% 0% round 0px)',
         duration: 0.6,
+        ease: 'power2.inOut',
       })
+      .to(p3.querySelector('.panel-text-col'), {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        ease: 'power2.out',
+      }, '-=0.45')
+      .to(p3.querySelectorAll('.panel-pill'), {
+        opacity: 1,
+        x: 0,
+        stagger: 0.02,
+        duration: 0.35,
+        ease: 'power1.out',
+      }, '-=0.25')
+      .to(p3.querySelectorAll('.panel-bubble'), {
+        opacity: 1,
+        scale: 1,
+        stagger: 0.03,
+        duration: 0.5,
+        ease: 'back.out(1.5)',
+      }, '-=0.4')
       .to({}, { duration: 0.35 }); // Hold state
 
       // --- PANEL 4 REVEAL ---
-      tl.to(panel4Ref.current, {
+      tl.to(p4, {
         opacity: 1,
         pointerEvents: 'auto',
         duration: 0.05,
       })
-      .to(panel4Ref.current, {
+      .to(p4, {
         clipPath: 'inset(0% 0% 0% 0% round 0px)',
         duration: 0.6,
+        ease: 'power2.inOut',
       })
+      .to(p4.querySelector('.panel4-title'), {
+        opacity: 1,
+        y: 0,
+        duration: 0.45,
+        ease: 'power2.out',
+      }, '-=0.45')
+      .to(p4.querySelector('.panel4-btn'), {
+        opacity: 1,
+        scale: 1,
+        duration: 0.45,
+        ease: 'back.out(1.8)',
+      }, '-=0.25')
       .to({}, { duration: 0.35 }); // Hold state
     });
 
@@ -139,7 +203,7 @@ export default function ScrollReel() {
   }, { scope: trackRef });
 
   return (
-    <div ref={trackRef} className="relative w-full h-auto md:h-screen md:overflow-hidden">
+    <div ref={trackRef} className="relative z-10 w-full h-auto md:h-screen md:overflow-hidden">
       
       {/* Sticky Screen Viewport (Desktop: GSAP Pinned, Mobile: relative flow) */}
       <div ref={containerRef} className="w-full h-auto md:h-full flex flex-col relative">
@@ -171,7 +235,7 @@ export default function ScrollReel() {
           <div className="flex flex-col md:flex-row w-full max-w-6xl px-6 md:px-12 items-center gap-12 md:gap-8 justify-between">
             
             {/* Column 1: Info */}
-            <div className="w-full md:w-[35%] flex flex-col gap-4">
+            <div className="w-full md:w-[35%] flex flex-col gap-4 panel-text-col">
               <h2 className="font-cormorant font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#3d5e3b] leading-tight">
                 SAP Stack
               </h2>
@@ -190,7 +254,7 @@ export default function ScrollReel() {
                   <div
                     key={bubble.name}
                     className={`
-                      aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm
+                      aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm panel-bubble
                       hover:bg-[#3d5e3b] hover:text-[#f7f5ef] hover:scale-105 hover:shadow-md
                       ${isLarge ? 'w-32 h-32 md:w-36 md:h-36 px-2' : isMedium ? 'w-24 h-24 md:w-28 md:h-28 text-xs' : 'w-20 h-20 md:w-24 md:h-24 text-[11px]'}
                       relative md:absolute ${bubble.animationClass}
@@ -226,7 +290,7 @@ export default function ScrollReel() {
           <div className="flex flex-col md:flex-row w-full max-w-6xl px-6 md:px-12 items-center gap-12 md:gap-8 justify-between">
             
             {/* Column 1: Info */}
-            <div className="w-full md:w-[35%] flex flex-col gap-4">
+            <div className="w-full md:w-[35%] flex flex-col gap-4 panel-text-col">
               <h2 className="font-cormorant font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#3d5e3b] leading-tight">
                 Java Stack
               </h2>
@@ -238,7 +302,7 @@ export default function ScrollReel() {
                 {javaPills.map(pill => (
                   <span
                     key={pill}
-                    className="px-3 py-1 bg-[#eae8df] text-[#3d5e3b] border border-[#3d5e3b]/10 rounded-full font-mono text-[10px] sm:text-[11px]"
+                    className="px-3 py-1 bg-[#eae8df] text-[#3d5e3b] border border-[#3d5e3b]/10 rounded-full font-mono text-[10px] sm:text-[11px] panel-pill"
                   >
                     {pill}
                   </span>
@@ -256,7 +320,7 @@ export default function ScrollReel() {
                   <div
                     key={bubble.name}
                     className={`
-                      aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm
+                      aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm panel-bubble
                       hover:bg-[#3d5e3b] hover:text-[#f7f5ef] hover:scale-105 hover:shadow-md
                       ${isLarge ? 'w-32 h-32 md:w-36 md:h-36 px-2' : isMedium ? 'w-24 h-24 md:w-28 md:h-28 text-xs' : 'w-20 h-20 md:w-24 md:h-24 text-[11px]'}
                       relative md:absolute ${bubble.animationClass}
@@ -281,12 +345,12 @@ export default function ScrollReel() {
         {/* PANEL 4: Stats & CTA */}
         <div
           ref={panel4Ref}
-          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#3d5e3b] z-40 py-16 md:py-0 relative"
+          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#3d5e3b] z-40 py-16 md:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col items-center text-center gap-10 px-6 max-w-4xl mx-auto">
             {/* Center Heading */}
-            <h2 className="font-cormorant font-light text-[#f7f5ef] leading-tight" style={{ fontSize: 'clamp(28px, 3.5vw, 64px)' }}>
+            <h2 className="font-cormorant font-light text-[#f7f5ef] leading-tight panel4-title" style={{ fontSize: 'clamp(28px, 3.5vw, 64px)' }}>
               11 projects. 2 internships.<br />1 SAP certification. And counting.
             </h2>
             
@@ -294,7 +358,7 @@ export default function ScrollReel() {
             <a
               href="#work"
               data-cursor="magnetic"
-              className="px-8 py-3.5 border border-[#a8c4a2] text-[#f7f5ef] hover:bg-[#8fa68a] hover:text-[#1a1a16] hover:border-transparent font-dm text-[15px] font-medium rounded-[2px] transition-all duration-300 select-none min-w-[180px] tracking-wide"
+              className="px-8 py-3.5 border border-[#a8c4a2] text-[#f7f5ef] hover:bg-[#8fa68a] hover:text-[#1a1a16] hover:border-transparent font-dm text-[15px] font-medium rounded-[2px] transition-all duration-300 select-none min-w-[180px] tracking-wide panel4-btn"
             >
               See the work →
             </a>

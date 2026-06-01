@@ -235,7 +235,7 @@ export default function Home() {
       )}
 
       {/* Placeholder Contact Section for Scroll Capability */}
-      <section id="contact" className="min-h-screen flex flex-col items-center justify-center bg-cream-3/15 border-t border-cream-3/45 py-24">
+      <section id="contact" className="relative z-20 min-h-screen flex flex-col items-center justify-center bg-cream-3/15 border-t border-cream-3/45 py-24">
         <div className="max-w-xl text-center px-6 flex flex-col gap-4">
           <h2 className="font-cormorant text-4xl sm:text-5xl font-semibold text-[#1a1a16] leading-tight">
             Get In Touch

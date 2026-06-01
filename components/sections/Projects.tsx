@@ -317,7 +317,7 @@ export default function Projects({ initialProjects }: ProjectsProps) {
   });
 
   return (
-    <section id="work" className="py-24 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
+    <section id="work" className="relative z-20 py-24 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
       <div className="max-w-6xl mx-auto px-6 flex flex-col gap-12">
         
         {/* Section Header */}
