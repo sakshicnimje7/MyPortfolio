@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
@@ -24,7 +25,45 @@ const ScrollReel = dynamic(() => import('@/components/sections/ScrollReel'), {
   ),
 });
 
+// Dynamically load the Projects component to prevent SSR window reference issues
+const Projects = dynamic(() => import('@/components/sections/Projects'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
+      Loading Selected Work...
+    </div>
+  ),
+});
+
+interface Project {
+  id: string;
+  title: string;
+  category: string;
+  shortDesc: string;
+  tags: string;
+  gitHubLink: string | null;
+  viewLink: string;
+}
+
 export default function Home() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/projects')
+      .then((res) => res.json())
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setProjects(data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error('Failed to fetch projects:', err);
+        setLoading(false);
+      });
+  }, []);
+
   // Stagger Container for Name slideUp animations
   const nameContainerVariants = {
     hidden: {},
@@ -186,17 +225,14 @@ export default function Home() {
       {/* ScrollReel Section */}
       <ScrollReel />
 
-      {/* Placeholder Work Section for Scroll Capability */}
-      <section id="work" className="min-h-screen flex flex-col items-center justify-center bg-cream-2/40 border-t border-cream-3/45 py-24">
-        <div className="max-w-xl text-center px-6 flex flex-col gap-4">
-          <h2 className="font-cormorant text-4xl sm:text-5xl font-semibold text-[#1a1a16] leading-tight">
-            Featured Projects
-          </h2>
-          <p className="font-dm text-sm text-[#5c7a5a] leading-relaxed">
-            A showcase of enterprise backend systems, SAP integrations, and modular architecture. Coming in the next stages.
-          </p>
+      {/* Projects Section */}
+      {loading ? (
+        <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
+          Loading Selected Work...
         </div>
-      </section>
+      ) : (
+        <Projects initialProjects={projects} />
+      )}
 
       {/* Placeholder Contact Section for Scroll Capability */}
       <section id="contact" className="min-h-screen flex flex-col items-center justify-center bg-cream-3/15 border-t border-cream-3/45 py-24">
