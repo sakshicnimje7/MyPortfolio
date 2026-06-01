@@ -35,6 +35,26 @@ const Projects = dynamic(() => import('@/components/sections/Projects'), {
   ),
 });
 
+// Dynamically load the Experience component to prevent SSR window reference issues
+const Experience = dynamic(() => import('@/components/sections/Experience'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#eae8df] border-t border-[#d4d0c4]/45">
+      Loading Experience...
+    </div>
+  ),
+});
+
+// Dynamically load the Certifications component to prevent SSR window reference issues
+const Certifications = dynamic(() => import('@/components/sections/Certifications'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
+      Loading Certifications...
+    </div>
+  ),
+});
+
 interface Project {
   id: string;
   title: string;
@@ -86,7 +106,7 @@ export default function Home() {
   };
 
   return (
-    <div className="hero-bg flex flex-col min-h-screen overflow-x-hidden relative">
+    <div className="hero-bg min-h-screen overflow-x-hidden relative block">
       
       {/* Hero Section */}
       <main className="flex-1 flex flex-col md:flex-row items-center justify-center w-full min-h-screen relative">
@@ -225,6 +245,9 @@ export default function Home() {
       {/* ScrollReel Section */}
       <ScrollReel />
 
+      {/* Experience Section */}
+      <Experience />
+
       {/* Projects Section */}
       {loading ? (
         <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
@@ -233,6 +256,9 @@ export default function Home() {
       ) : (
         <Projects initialProjects={projects} />
       )}
+
+      {/* Certifications Section */}
+      <Certifications />
 
       {/* Placeholder Contact Section for Scroll Capability */}
       <section id="contact" className="relative z-20 min-h-screen flex flex-col items-center justify-center bg-cream-3/15 border-t border-cream-3/45 py-24">
