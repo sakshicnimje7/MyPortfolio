@@ -14,6 +14,16 @@ const CatScene = dynamic(() => import('@/components/3d/CatScene'), {
   ),
 });
 
+// Dynamically load the ScrollReel component to prevent SSR window reference issues
+const ScrollReel = dynamic(() => import('@/components/sections/ScrollReel'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef]">
+      Loading Bio & Skills...
+    </div>
+  ),
+});
+
 export default function Home() {
   // Stagger Container for Name slideUp animations
   const nameContainerVariants = {
@@ -172,6 +182,9 @@ export default function Home() {
         </motion.div>
 
       </main>
+
+      {/* ScrollReel Section */}
+      <ScrollReel />
 
       {/* Placeholder Work Section for Scroll Capability */}
       <section id="work" className="min-h-screen flex flex-col items-center justify-center bg-cream-2/40 border-t border-cream-3/45 py-24">

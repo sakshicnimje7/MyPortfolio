@@ -81,4 +81,32 @@
   }
 }
 
+@keyframes bubble-1 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+}
+
+@keyframes bubble-2 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-14px) rotate(-2deg); }
+}
+
+@keyframes bubble-3 {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-8px) rotate(1deg); }
+}
+
+.animate-bubble-1 {
+  animation: bubble-1 6s ease-in-out infinite;
+}
+
+.animate-bubble-2 {
+  animation: bubble-2 8s ease-in-out infinite;
+}
+
+.animate-bubble-3 {
+  animation: bubble-3 7s ease-in-out infinite;
+}
+
+
 
