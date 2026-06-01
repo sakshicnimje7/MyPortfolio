@@ -108,5 +108,14 @@
   animation: bubble-3 7s ease-in-out infinite;
 }
 
+@media (min-width: 768px) {
+  .panel-initial {
+    opacity: 0;
+    pointer-events: none;
+    clip-path: inset(6% 5% 6% 5% round 20px);
+  }
+}
+
+
 
 

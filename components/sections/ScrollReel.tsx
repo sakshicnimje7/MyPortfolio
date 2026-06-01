@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -28,8 +28,16 @@ export default function ScrollReel() {
   const panel3Ref = useRef<HTMLDivElement>(null);
   const panel4Ref = useRef<HTMLDivElement>(null);
 
+  const [isDesktop, setIsDesktop] = useState(false);
   const [hoveredSapIndex, setHoveredSapIndex] = useState<number | null>(null);
   const [hoveredJavaIndex, setHoveredJavaIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    setIsDesktop(window.innerWidth >= 768);
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const sapBubbles: BubbleSkill[] = [
     { name: 'ABAP Cloud', size: 'large', certified: true, position: { top: '32%', left: '32%' }, animationClass: 'animate-bubble-1' },
@@ -78,13 +86,15 @@ export default function ScrollReel() {
         pointerEvents: 'none',
       });
 
-      // 2. Create ScrollTrigger Timeline scrubbing through the 500vh track
+      // 2. Create ScrollTrigger Timeline scrubbing through the track with native GSAP pinning
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: trackRef.current,
           start: 'top top',
-          end: 'bottom bottom',
+          end: () => `+=${window.innerHeight * 4}`,
           scrub: 1,
+          pin: true,
+          anticipatePin: 1,
         },
       });
 
@@ -129,10 +139,10 @@ export default function ScrollReel() {
   }, { scope: trackRef });
 
   return (
-    <div ref={trackRef} className="relative w-full h-auto md:h-[500vh]">
+    <div ref={trackRef} className="relative w-full h-auto md:h-screen md:overflow-hidden">
       
-      {/* Sticky Screen Viewport (Desktop: 100vh Sticky, Mobile: relative flow) */}
-      <div ref={containerRef} className="w-full h-auto md:h-screen md:sticky md:top-0 md:overflow-hidden flex flex-col">
+      {/* Sticky Screen Viewport (Desktop: GSAP Pinned, Mobile: relative flow) */}
+      <div ref={containerRef} className="w-full h-auto md:h-full flex flex-col relative">
         
         {/* PANEL 1: Bio */}
         <div
@@ -186,8 +196,8 @@ export default function ScrollReel() {
                       relative md:absolute ${bubble.animationClass}
                     `}
                     style={{
-                      top: typeof window !== 'undefined' && window.innerWidth >= 768 ? bubble.position.top : 'auto',
-                      left: typeof window !== 'undefined' && window.innerWidth >= 768 ? bubble.position.left : 'auto',
+                      top: isDesktop ? bubble.position.top : 'auto',
+                      left: isDesktop ? bubble.position.left : 'auto',
                       filter: hoveredSapIndex !== null && hoveredSapIndex !== idx ? 'blur(3px) opacity(0.5)' : 'none',
                     }}
                     onMouseEnter={() => setHoveredSapIndex(idx)}
@@ -252,8 +262,8 @@ export default function ScrollReel() {
                       relative md:absolute ${bubble.animationClass}
                     `}
                     style={{
-                      top: typeof window !== 'undefined' && window.innerWidth >= 768 ? bubble.position.top : 'auto',
-                      left: typeof window !== 'undefined' && window.innerWidth >= 768 ? bubble.position.left : 'auto',
+                      top: isDesktop ? bubble.position.top : 'auto',
+                      left: isDesktop ? bubble.position.left : 'auto',
                       filter: hoveredJavaIndex !== null && hoveredJavaIndex !== idx ? 'blur(3px) opacity(0.5)' : 'none',
                     }}
                     onMouseEnter={() => setHoveredJavaIndex(idx)}
