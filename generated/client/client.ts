@@ -56,3 +56,8 @@ export type BlogPost = Prisma.BlogPostModel
  * 
  */
 export type Achievement = Prisma.AchievementModel
+/**
+ * Model PageView
+ * 
+ */
+export type PageView = Prisma.PageViewModel

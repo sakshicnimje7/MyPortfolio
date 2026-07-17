@@ -4,6 +4,19 @@ import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollToPlugin } from 'gsap/ScrollToPlugin';
+import { Flip } from 'gsap/Flip';
+import { useGSAP } from '@gsap/react';
+
+// Dynamically load the AwwwardsNav component to prevent SSR window reference and hydration issues
+const AwwwardsNav = dynamic(() => import('@/components/ui/AwwwardsNav'), {
+  ssr: false,
+});
+
+// Register GSAP plugins
+gsap.registerPlugin(ScrollTrigger, ScrollToPlugin, Flip);
 
 // Dynamically load the CatScene component to prevent document/window check errors during SSR
 const CatScene = dynamic(() => import('@/components/3d/CatScene'), {
@@ -13,6 +26,11 @@ const CatScene = dynamic(() => import('@/components/3d/CatScene'), {
       Loading Cat...
     </div>
   ),
+});
+
+// Dynamically load the NatureBackground component to prevent SSR window reference issues
+const NatureBackground = dynamic(() => import('@/components/ui/NatureBackground'), {
+  ssr: false,
 });
 
 // Dynamically load the ScrollReel component to prevent SSR window reference issues
@@ -55,12 +73,12 @@ const Certifications = dynamic(() => import('@/components/sections/Certification
   ),
 });
 
-// Dynamically load the Lab component to prevent SSR window reference issues
-const Lab = dynamic(() => import('@/components/sections/Lab'), {
+// Dynamically load the Contact component to prevent SSR window reference issues
+const Contact = dynamic(() => import('@/components/sections/Contact'), {
   ssr: false,
   loading: () => (
-    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#1b201b] border-t border-[#3d5e3b]/30">
-      Loading The Lab...
+    <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#3d5e3b] text-[#f7f5ef]">
+      Loading Contact...
     </div>
   ),
 });
@@ -83,6 +101,10 @@ export default function Home() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [activeSlide, setActiveSlide] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Fetch projects from the backend database
   useEffect(() => {
     fetch('/api/projects')
       .then((res) => res.json())
@@ -97,6 +119,90 @@ export default function Home() {
         setLoading(false);
       });
   }, []);
+
+  // Initialize the master Fullscreen Slider pinning ScrollTrigger
+  useGSAP(() => {
+    const trigger = ScrollTrigger.create({
+      trigger: '.master-slider-container',
+      start: 'top top',
+      end: '+=600%', // Pinned for 6 fullscreen slides worth of scrolling
+      pin: true,
+      pinSpacing: true,
+      scrub: 0.5,
+      onUpdate: (self) => {
+        setScrollProgress(self.progress);
+        const slide = Math.min(Math.floor(self.progress * 6 + 0.05), 5);
+        setActiveSlide(slide);
+      },
+    });
+
+    return () => {
+      trigger.kill();
+    };
+  }, []);
+
+  // Handle navbar clicks to smoothly scroll to the selected slide
+  const handleNavClick = (index: number) => {
+    gsap.to(window, {
+      scrollTo: index * window.innerHeight,
+      duration: 1.2,
+      ease: 'power3.out',
+    });
+  };
+
+  // Maps total progress down to a [0, 1] sub-progress segment for each slide
+  const getSlideProgress = (index: number) => {
+    const start = index / 6;
+    const end = (index + 1) / 6;
+    if (scrollProgress < start) return 0;
+    if (scrollProgress > end) return 1;
+    return (scrollProgress - start) / (end - start);
+  };
+
+  const slideStyle = (index: number) => ({
+    opacity: activeSlide === index ? 1 : 0,
+    pointerEvents: activeSlide === index ? ('auto' as const) : ('none' as const),
+    transition: 'opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1)',
+    transform: activeSlide === index ? 'translateY(0)' : activeSlide > index ? 'translateY(-20px)' : 'translateY(20px)',
+  });
+
+  const [viewportSize, setViewportSize] = useState({ w: 1200, h: 800 });
+
+  // Track window resizing for responsive dimensions calculation
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportSize({ w: window.innerWidth, h: window.innerHeight });
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize();
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Calculate dynamic dimensions for Slide 0 to match AwwwardsNav background box
+  const heroProgress = getSlideProgress(0);
+  const isDesktop = viewportSize.w >= 720;
+  let currentWidth = viewportSize.w;
+  let currentHeight = viewportSize.h;
+
+  if (isDesktop) {
+    const initialWidth = Math.max(viewportSize.w * 0.5, 720);
+    const initialHeight = initialWidth * (9 / 16);
+    currentWidth = gsap.utils.interpolate(initialWidth, viewportSize.w, heroProgress);
+    currentHeight = gsap.utils.interpolate(initialHeight, viewportSize.h, heroProgress);
+  }
+
+  const slide0Style = {
+    position: 'absolute' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: `${currentWidth}px`,
+    height: `${currentHeight}px`,
+    overflow: 'hidden',
+    opacity: activeSlide === 0 ? 1 : 0,
+    pointerEvents: activeSlide === 0 ? ('auto' as const) : ('none' as const),
+    transition: 'opacity 0.5s ease',
+  };
 
   // Stagger Container for Name slideUp animations
   const nameContainerVariants = {
@@ -114,186 +220,212 @@ export default function Home() {
       y: 0,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1] as [number, number, number, number], // Smooth out-expo easing
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       },
     },
   };
 
   return (
-    <div className="hero-bg min-h-screen overflow-x-hidden relative block">
-      
-      {/* Hero Section */}
-      <main className="flex-1 flex flex-col md:flex-row items-center justify-center w-full min-h-screen relative">
-        
-        {/* Left Column: Cat Scene */}
-        {/* Desktop: 50vw wide, 100vh tall, vertically centered. Mobile: stacked on top, 40vh height */}
-        <div className="w-full md:w-[50vw] h-[45vh] md:h-screen relative flex items-center justify-center pt-12 md:pt-0">
-          
-          {/* 3D Cat Scene (Desktop only) */}
-          <div className="hidden md:block w-full h-full">
-            <CatScene />
-          </div>
+    <div className="w-full bg-[#f7f5ef] dark:bg-[#111410] relative">
+      <div className="master-slider-container w-full h-screen overflow-hidden relative">
+      {/* 1. Backdrop trigger for AwwwardsNav (keeps scroll area matches trigger dimensions) */}
+      <div className="navbar-backdrop-trigger absolute top-0 left-0 w-full h-[100vh] pointer-events-none" />
 
-          {/* 2D Floating Image Fallback (Mobile only) */}
-          <div className="block md:hidden w-56 h-56 relative animate-float">
-            <Image
-              src="/cat.png"
-              alt="Voxel Cat Mobile Fallback"
-              fill
-              className="object-contain"
-              priority
-            />
-          </div>
+      {/* 2. Interactive expanding navigation */}
+      <AwwwardsNav onNavClick={handleNavClick} progress={getSlideProgress(0)} />
 
-        </div>
+      {/* 3. Faint nature background animation */}
+      <NatureBackground />
 
-        {/* Right Column: Text Content */}
-        {/* Desktop: 50vw wide, 100vh tall, vertically centered. Mobile: bottom stacked */}
-        <div className="w-full md:w-[50vw] min-h-[55vh] md:min-h-screen flex flex-col justify-center px-6 sm:px-12 md:px-16 lg:px-24 py-8 md:py-0 gap-6 md:gap-8 z-10">
-          
-          {/* 1. Small Label: fadeUp entry, delay 0.2s */}
-          <motion.span
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="font-dm text-xs tracking-[0.12em] text-[#8fa68a] uppercase font-medium"
-          >
-            SAP Certified · Full Stack · Open to Work
-          </motion.span>
-
-          {/* 2. Name: Sakshi Nimje on two lines, slides up stagger 0.15s */}
-          <motion.div
-            variants={nameContainerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col"
-          >
-            {/* Sakshi line - removed hardcoded height to prevent letter clipping */}
-            <div className="overflow-hidden pb-1 mb-1">
-              <motion.h1
-                variants={wordVariants}
-                className="font-cormorant font-semibold text-[#1a1a16] leading-none"
-                style={{ fontSize: 'clamp(56px, 9vw, 120px)' }}
+      {/* 3.5. Fullscreen Navigation Indicator (Configured from Fullscreen-slider repo) */}
+      <div className="slider-indicator hidden md:flex">
+        <div className="slider-indices">
+          {[0, 1, 2, 3, 4, 5].map((idx) => {
+            const isActive = activeSlide === idx;
+            const indexNum = (idx + 1).toString().padStart(2, '0');
+            return (
+              <p
+                key={idx}
+                onClick={() => handleNavClick(idx)}
+                className="group"
               >
-                Sakshi
-              </motion.h1>
-            </div>
-            
-            {/* Nimje line - added padding bottom to clear serif metrics & underline */}
-            <div className="overflow-hidden pb-4 relative">
-              <motion.h1
-                variants={wordVariants}
-                className="font-cormorant font-semibold text-[#1a1a16] leading-none inline-block relative pr-2"
-                style={{ fontSize: 'clamp(56px, 9vw, 120px)' }}
-              >
-                Nimje
-                {/* Posited amber underline decoration */}
-                <div 
-                  className="absolute left-0 bottom-[4%] w-full h-[6px] sm:h-[8px] bg-[#c4862a]/70 rounded-full -z-10"
+                <span
+                  className="marker"
+                  style={{ transform: isActive ? 'scaleX(1)' : 'scaleX(0)' }}
                 />
-              </motion.h1>
+                <span
+                  className="index"
+                  style={{ opacity: isActive ? 1 : 0.35 }}
+                >
+                  {indexNum}
+                </span>
+              </p>
+            );
+          })}
+        </div>
+
+        <div className="slider-progress-bar">
+          <div
+            className="slider-progress"
+            style={{ transform: `scaleY(${scrollProgress})` }}
+          />
+        </div>
+      </div>
+
+      {/* 4. Slides Viewports */}
+      <div className="relative w-full h-full z-10">
+        
+        {/* SLIDE 0: Hero / Mascot */}
+        <div style={slide0Style}>
+          <main className="w-full h-full flex flex-col md:flex-row items-center justify-center relative py-6 md:py-0">
+            {/* Left Column: Cat Scene */}
+            <div className="w-full md:w-1/2 h-[45%] md:h-full relative flex items-center justify-center pt-4 md:pt-0">
+              <div className="hidden md:block w-full h-full">
+                <CatScene />
+              </div>
+              <div className="block md:hidden w-36 h-36 relative animate-float">
+                <Image
+                  src="/cat.png"
+                  alt="Voxel Cat Mobile Fallback"
+                  fill
+                  sizes="(max-width: 768px) 144px, 100vw"
+                  className="object-contain"
+                  priority
+                />
+              </div>
             </div>
-          </motion.div>
 
-          {/* 3. One-liner: fadeIn entry, delay 0.6s */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="font-dm font-light text-[1.2rem] text-[#5c7a5a] max-w-[380px] leading-relaxed"
-          >
-            I engineer enterprise backends and animate the web.
-          </motion.p>
+            {/* Right Column: Text Content */}
+            <div className="w-full md:w-1/2 h-[55%] md:h-full flex flex-col justify-center px-6 md:px-12 py-4 md:py-0 gap-4 md:gap-6 z-10">
+              <motion.span
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="font-dm text-[10px] sm:text-xs tracking-[0.12em] text-[var(--sage)] uppercase font-medium"
+              >
+                SAP Certified · Full Stack · Open to Work
+              </motion.span>
 
-          {/* 4. Two buttons: magnetic hovers, delay 0.8s */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="flex flex-wrap gap-4 mt-2"
-          >
-            <a
-              href="#work"
-              data-cursor="magnetic"
-              className="px-7 py-3 bg-[#3d5e3b] text-[#f7f5ef] hover:bg-[#5c7a5a] font-dm text-[14px] font-medium rounded-[2px] transition-colors duration-300 select-none text-center min-w-[140px]"
-            >
-              See my work
-            </a>
-            
-            <a
-              href="#contact"
-              data-cursor="magnetic"
-              className="px-7 py-3 border border-[#c4862a] text-[#c4862a] hover:bg-[#f0d4a8]/20 font-dm text-[14px] font-medium rounded-[2px] transition-all duration-300 select-none text-center min-w-[140px]"
-            >
-              Get in touch
-            </a>
-          </motion.div>
+              <motion.div
+                variants={nameContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="flex flex-col"
+              >
+                <div className="overflow-hidden pb-1 mb-1">
+                  <motion.h1
+                    variants={wordVariants}
+                    className="font-cormorant font-semibold text-[var(--ink)] leading-none text-[clamp(44px,6vw,96px)]"
+                  >
+                    Sakshi
+                  </motion.h1>
+                </div>
+                <div className="overflow-hidden pb-4 relative">
+                  <motion.h1
+                    variants={wordVariants}
+                    className="font-cormorant font-semibold text-[var(--ink)] leading-none inline-block relative pr-2 text-[clamp(44px,6vw,96px)]"
+                  >
+                    Nimje
+                    <div className="absolute left-0 bottom-[4%] w-full h-[6px] sm:h-[8px] bg-[var(--amber)]/70 rounded-full -z-10" />
+                  </motion.h1>
+                </div>
+              </motion.div>
 
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="font-dm font-light text-[0.9rem] sm:text-[1.1rem] text-[var(--sage-mid)] max-w-[340px] leading-relaxed"
+              >
+                I engineer enterprise backends and animate the web.
+              </motion.p>
+
+              <motion.div
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+                className="flex flex-col sm:flex-row w-full sm:w-auto gap-3 mt-1"
+              >
+                <button
+                  onClick={() => handleNavClick(3)} // Jump to Work (Slide 3)
+                  data-cursor="magnetic"
+                  className="px-6 py-2.5 bg-[var(--forest)] text-[var(--cream)] hover:bg-[var(--sage-mid)] font-dm text-[13px] font-medium rounded-[2px] transition-colors duration-300 select-none text-center w-full sm:w-auto sm:min-w-[120px]"
+                >
+                  See my work
+                </button>
+
+                <button
+                  onClick={() => handleNavClick(5)} // Jump to Contact (Slide 5)
+                  data-cursor="magnetic"
+                  className="px-6 py-2.5 border border-[var(--amber)] text-[var(--amber)] hover:bg-[var(--amber-light)]/20 font-dm text-[13px] font-medium rounded-[2px] transition-colors duration-300 select-none text-center w-full sm:w-auto sm:min-w-[120px]"
+                >
+                  Get in touch
+                </button>
+              </motion.div>
+            </div>
+
+            {/* Scroll Indicator (Anchored inside expanding box) */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2 z-10">
+              <span className="font-dm text-[9px] tracking-[0.15em] text-[#8fa68a] uppercase select-none">
+                scroll to explore
+              </span>
+              <div className="w-[1.5px] h-8 bg-[#8fa68a]/20 relative overflow-hidden rounded-full">
+                <motion.div
+                  animate={{ y: ['-100%', '100%'] }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: 1.8,
+                    ease: 'easeInOut',
+                  }}
+                  className="absolute top-0 left-0 w-full h-1/2 bg-[#8fa68a]"
+                />
+              </div>
+            </div>
+          </main>
         </div>
 
-        {/* 5. Scroll Indicator: delay 1.2s (nested inside relative main to align with hero viewport) */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 1.2 }}
-          className="absolute bottom-8 left-1/2 md:left-auto md:right-16 transform -translate-x-1/2 md:translate-x-0 flex flex-col items-center gap-3 z-10"
-        >
-          <span className="font-dm text-[11px] tracking-[0.15em] text-[#8fa68a] uppercase select-none">
-            scroll to explore
-          </span>
-          <div className="w-[1.5px] h-10 bg-[#8fa68a]/20 relative overflow-hidden rounded-full">
-            <motion.div
-              animate={{ y: ['-100%', '100%'] }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.8,
-                ease: 'easeInOut',
-              }}
-              className="absolute top-0 left-0 w-full h-1/2 bg-[#8fa68a]"
+        {/* SLIDE 1: About / ScrollReel */}
+        <div className="absolute inset-0 w-full h-full" style={slideStyle(1)}>
+          <ScrollReel active={activeSlide === 1} progress={getSlideProgress(1)} />
+        </div>
+
+        {/* SLIDE 2: Experience timeline */}
+        <div className="absolute inset-0 w-full h-full overflow-y-auto py-12" style={slideStyle(2)}>
+          <Experience />
+        </div>
+
+        {/* SLIDE 3: Projects (3D Sticky Cards stack) */}
+        <div className="absolute inset-0 w-full h-full" style={slideStyle(3)}>
+          {loading ? (
+            <div className="w-full h-full flex items-center justify-center font-mono text-xs opacity-60">
+              Loading Selected Work...
+            </div>
+          ) : (
+            <Projects 
+              initialProjects={projects} 
+              active={activeSlide === 3} 
+              progress={getSlideProgress(3)} 
             />
+          )}
+        </div>
+
+        {/* SLIDE 4: Certifications */}
+        <div className="absolute inset-0 w-full h-full overflow-y-auto py-12" style={slideStyle(4)}>
+          <Certifications />
+        </div>
+
+        {/* SLIDE 5: Contact Footer */}
+        <div className="absolute inset-0 w-full h-full overflow-y-auto flex flex-col justify-between" style={slideStyle(5)}>
+          <div className="flex-1 flex items-center justify-center">
+            <Contact />
           </div>
-        </motion.div>
-
-      </main>
-
-      {/* ScrollReel Section */}
-      <ScrollReel />
-
-      {/* Experience Section */}
-      <Experience />
-
-      {/* Lab Section */}
-      <Lab />
-
-      {/* Projects Section */}
-      {loading ? (
-        <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
-          Loading Selected Work...
+          <footer className="p-6 text-center border-t border-cream-3/30 dark:border-cream-3/10 font-mono text-xs opacity-60 bg-[#eae8df]/20 dark:bg-[#181c17]/20">
+            © 2026 Sakshi Portfolio. Designed with Next.js 14, Tailwind CSS, GSAP, & React Three Fiber.
+          </footer>
         </div>
-      ) : (
-        <Projects initialProjects={projects} />
-      )}
 
-      {/* Certifications Section */}
-      <Certifications />
-
-      {/* Placeholder Contact Section for Scroll Capability */}
-      <section id="contact" className="relative z-20 min-h-screen flex flex-col items-center justify-center bg-cream-3/15 border-t border-cream-3/45 py-24">
-        <div className="max-w-xl text-center px-6 flex flex-col gap-4">
-          <h2 className="font-cormorant text-4xl sm:text-5xl font-semibold text-[#1a1a16] leading-tight">
-            Get In Touch
-          </h2>
-          <p className="font-dm text-sm text-[#5c7a5a] leading-relaxed">
-            Have a project in mind, open roles, or want to collaborate? I am open to discussing full-stack opportunities.
-          </p>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="p-6 text-center border-t border-cream-3/50 dark:border-cream-3/10 font-mono text-xs opacity-60">
-        © 2026 Sakshi Portfolio. Designed with Next.js 14, Tailwind CSS, GSAP, & React Three Fiber.
-      </footer>
-
+      </div>
     </div>
+  </div>
   );
 }

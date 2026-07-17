@@ -8,7 +8,7 @@ export async function PATCH(
   try {
     const { id } = params;
     const body = await request.json();
-    
+
     const data: {
       title?: string;
       slug?: string;

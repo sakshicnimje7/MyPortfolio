@@ -1,30 +1,49 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function PageLoader() {
-  const [isVisible, setIsVisible] = useState(true);
-  
+  const [isVisible, setIsVisible] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
-  const clipRef = useRef<SVGRectElement>(null);
   const leafRef = useRef<SVGSVGElement>(null);
   const nameRef = useRef<HTMLHeadingElement>(null);
 
+  useEffect(() => {
+    // Only play loader on cold load
+    const played = sessionStorage.getItem('portfolio-loader-played');
+    if (!played) {
+      setIsVisible(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isVisible) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isVisible]);
+
   useGSAP(() => {
-    if (!isVisible || !clipRef.current || !leafRef.current || !nameRef.current) return;
+    if (!isVisible || !containerRef.current || !leafRef.current || !nameRef.current) return;
 
     // Create GSAP timeline for reveal
     const tl = gsap.timeline({
       onComplete: () => {
+        sessionStorage.setItem('portfolio-loader-played', 'true');
         setIsVisible(false);
       }
     });
 
-    // Step 2: After 200ms, animate clipPath rect y to -1 (collapses upward)
-    tl.to(clipRef.current, {
-      attr: { y: -1 },
+    // Slide up (translateY -100%) over 1.2s, ease: expo.inOut
+    tl.to(containerRef.current, {
+      yPercent: -100,
       duration: 1.2,
       ease: 'expo.inOut',
       delay: 0.2,
@@ -35,29 +54,20 @@ export default function PageLoader() {
       opacity: 0,
       duration: 0.3,
       ease: 'power1.out',
-    }, '-=0.3'); // Starts 0.3 seconds before clipPath animation finishes
+    }, '-=0.3');
   }, { scope: containerRef, dependencies: [isVisible] });
 
   if (!isVisible) return null;
 
   return (
     <>
-      {/* SVG ClipPath Definition */}
-      <svg className="absolute w-0 h-0 pointer-events-none">
-        <defs>
-          <clipPath id="loader-clip" clipPathUnits="objectBoundingBox">
-            <rect ref={clipRef} x="0" y="0" width="1" height="1" fill="white" />
-          </clipPath>
-        </defs>
-      </svg>
-
       {/* Loader Overlay */}
       <div
         ref={containerRef}
         className="fixed inset-0 z-50 flex items-center justify-center"
         style={{
           backgroundColor: '#f7f5ef', // cream
-          clipPath: 'url(#loader-clip)',
+          willChange: 'transform',
         }}
       >
         <div className="flex flex-col items-center gap-6 text-center">

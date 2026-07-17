@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
+import { gsap } from 'gsap';
 import * as THREE from 'three';
 
 interface Project {
@@ -9,7 +11,7 @@ interface Project {
   slug: string;
   description: string;
   shortDesc: string;
-  tags: string; // Comma-separated list
+  tags: string; // Comma-separated
   category: string;
   liveUrl: string;
   githubUrl: string | null;
@@ -19,17 +21,14 @@ interface Project {
 
 interface ProjectsProps {
   initialProjects: Project[];
+  active?: boolean;
+  progress?: number;
 }
 
 // -------------------------------------------------------------
-// WebGL Canvas Header Component
+// WebGL Canvas Overlay for 3D Card Columns
 // -------------------------------------------------------------
-interface CanvasHeaderProps {
-  color: string;
-  isHovered: boolean;
-}
-
-function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
+function CanvasHeader({ color, isHovered }: { color: string; isHovered: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
@@ -38,10 +37,8 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
   const materialRef = useRef<THREE.ShaderMaterial | null>(null);
   const meshRef = useRef<THREE.Mesh | null>(null);
   
-  const animationFrameRef = useRef<number | null>(null);
-  const timeRef = useRef<number>(Math.random() * 100); // Random offset so waves look organic
+  const timeRef = useRef<number>(Math.random() * 100);
 
-  // Initialize Three.js Scene
   useEffect(() => {
     const currentContainer = containerRef.current;
     if (!currentContainer) return;
@@ -49,7 +46,6 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
     const width = currentContainer.clientWidth || 300;
     const height = currentContainer.clientHeight || 160;
 
-    // Create Scene, Camera, Renderer
     const scene = new THREE.Scene();
     sceneRef.current = scene;
 
@@ -64,12 +60,9 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
     rendererRef.current = renderer;
 
     const threeColor = new THREE.Color(color);
-
-    // Create Plane Geometry (highly subdivided for smooth waves)
-    const geometry = new THREE.PlaneGeometry(3.2, 2.0, 48, 48);
+    const geometry = new THREE.PlaneGeometry(3.2, 2.0, 32, 32);
     geometryRef.current = geometry;
 
-    // Custom Vertex & Fragment Shaders for sin-wave displacement
     const material = new THREE.ShaderMaterial({
       uniforms: {
         uTime: { value: timeRef.current },
@@ -82,8 +75,7 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
         void main() {
           vUv = uv;
           vec3 pos = position;
-          // Apply organic wave displacement on vertex z-axis
-          float elevation = sin(pos.x * 5.0 + uTime * 2.5) * 0.14 * cos(pos.y * 5.0 + uTime * 1.8);
+          float elevation = sin(pos.x * 4.0 + uTime * 2.0) * 0.12 * cos(pos.y * 4.0 + uTime * 1.5);
           pos.z += elevation;
           vElevation = elevation;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
@@ -94,13 +86,9 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
         varying float vElevation;
         varying vec2 vUv;
         void main() {
-          // Adjust color based on displacement height to simulate light/shadow depth
-          vec3 color = uColor + vec3(vElevation * 0.22);
-          
-          // Subtle radial vignette to soften edges
+          vec3 color = uColor + vec3(vElevation * 0.25);
           float vignette = vUv.x * (1.0 - vUv.x) * vUv.y * (1.0 - vUv.y) * 16.0;
           color *= mix(0.85, 1.0, vignette);
-          
           gl_FragColor = vec4(color, 1.0);
         }
       `,
@@ -112,7 +100,6 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
     scene.add(mesh);
     meshRef.current = mesh;
 
-    // Resize Handler
     const handleResize = () => {
       if (!currentContainer || !renderer || !camera) return;
       const w = currentContainer.clientWidth;
@@ -123,7 +110,6 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
     };
     window.addEventListener('resize', handleResize);
 
-    // Initial render
     renderer.render(scene, camera);
 
     return () => {
@@ -133,26 +119,17 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
       if (currentContainer && renderer) {
         try {
           currentContainer.removeChild(renderer.domElement);
-        } catch {
-          // ignore
-        }
+        } catch {}
       }
       renderer.dispose();
     };
   }, [color]);
 
-  // Handle Play/Pause animation loop on Hover State changes
   useEffect(() => {
     let animationFrameId: number | null = null;
-
     const tick = () => {
-      if (
-        materialRef.current &&
-        rendererRef.current &&
-        sceneRef.current &&
-        cameraRef.current
-      ) {
-        timeRef.current += 0.025; // Wave speed multiplier
+      if (materialRef.current && rendererRef.current && sceneRef.current && cameraRef.current) {
+        timeRef.current += 0.02;
         materialRef.current.uniforms.uTime.value = timeRef.current;
         rendererRef.current.render(sceneRef.current, cameraRef.current);
       }
@@ -162,146 +139,119 @@ function CanvasHeader({ color, isHovered }: CanvasHeaderProps) {
     if (isHovered) {
       animationFrameId = requestAnimationFrame(tick);
     } else {
-      if (animationFrameRef.current) {
-        cancelAnimationFrame(animationFrameRef.current);
-      }
-      // Re-render once to keep static frame visible
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
       if (rendererRef.current && sceneRef.current && cameraRef.current) {
         rendererRef.current.render(sceneRef.current, cameraRef.current);
       }
     }
 
     return () => {
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
   }, [isHovered]);
 
-  return (
-    <div 
-      ref={containerRef} 
-      className="absolute inset-0 w-full h-full pointer-events-none"
-    />
-  );
+  return <div ref={containerRef} className="absolute inset-0 w-full h-full pointer-events-none" />;
 }
 
 // -------------------------------------------------------------
-// Single Project Card Component with Intersection Observer
+// Card Item Component
 // -------------------------------------------------------------
-function ProjectCard({ project, index }: { project: Project; index: number }) {
+function StickyCard({ 
+  project, 
+  index, 
+  placeholderImage 
+}: { 
+  project: Project; 
+  index: number;
+  placeholderImage: string;
+}) {
   const [isHovered, setIsHovered] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef<HTMLDivElement>(null);
-
-  // Stagger reveal on intersection
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
-    );
-
-    if (cardRef.current) {
-      observer.observe(cardRef.current);
-    }
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
 
   const getCategoryColor = (cat: string) => {
     switch (cat.toUpperCase()) {
-      case 'SAP':
-        return '#d4d0c4';
-      case 'JAVA':
-        return '#eae8df';
-      case 'AI':
-        return '#f0d4a8'; // amber light
-      case 'FRONTEND':
-        return '#a8c4a2';
-      default:
-        return '#d4d0c4';
+      case 'SAP': return '#3d2fa9';
+      case 'JAVA': return '#ff7722';
+      case 'AI': return '#ff3d33';
+      case 'FRONTEND': return '#785f47';
+      default: return '#5c7a5a';
     }
   };
 
-  const headerColor = getCategoryColor(project.category);
-  const tagsList = project.tags.split(',').map(tag => tag.trim());
+  const cardBg = getCategoryColor(project.category);
+  const tagsList = project.tags.split(',').map(t => t.trim());
 
   return (
     <div
       ref={cardRef}
-      data-cursor="text"
-      className="bg-[#f7f5ef] border border-[#d4d0c4] rounded-[4px] overflow-hidden flex flex-col justify-between transition-all duration-700 ease-out shadow-sm select-none"
-      style={{
-        opacity: isVisible ? 1 : 0,
-        transform: isVisible ? 'translateY(0)' : 'translateY(40px)',
-        transitionDelay: `${index * 0.1}s`,
+      id={`card-${index}`}
+      className="card shadow-2xl border border-cream-3/20 bg-cover relative select-none"
+      style={{ 
+        backgroundColor: cardBg,
+        zIndex: 20 - index
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div>
-        {/* Coloured Header Bar (height 160px) with canvas overlay */}
-        <div 
-          className="h-[160px] relative w-full overflow-hidden flex items-center justify-center text-center p-6 border-b border-[#d4d0c4]/45"
-          style={{ backgroundColor: headerColor }}
-        >
-          <CanvasHeader color={headerColor} isHovered={isHovered} />
-          
-          <h3 className="font-cormorant font-semibold text-2xl sm:text-3xl text-[#1a1a16] z-10 select-none pointer-events-none px-4 drop-shadow-sm">
-            {project.title}
-          </h3>
-        </div>
+      {/* Wave Background Overlay */}
+      <CanvasHeader color={cardBg} isHovered={isHovered} />
 
-        {/* Card Body */}
-        <div className="p-5 flex flex-col gap-4">
-          <p className="font-dm text-sm font-light text-[#5c7a5a] leading-relaxed">
+      {/* Columns */}
+      <div className="col flex flex-col justify-between p-4 sm:p-8 z-10">
+        <div className="flex flex-col gap-2 sm:gap-4">
+          <p className="font-mono text-xs sm:text-sm tracking-widest text-[#f7f5ef]/80">
+            {project.category} · PROJECT {index + 1}
+          </p>
+          <h2 className="font-cormorant font-semibold text-3xl sm:text-5xl text-[#f7f5ef] leading-tight">
+            {project.title}
+          </h2>
+          <p className="font-dm font-light text-sm sm:text-base text-[#f7f5ef]/90 leading-relaxed max-w-md normal-case">
             {project.shortDesc}
           </p>
+        </div>
 
-          {/* Tags */}
+        {/* Tags & Action Links */}
+        <div className="flex flex-col gap-4 mt-6">
           <div className="flex flex-wrap gap-2">
             {tagsList.map(tag => (
-              <span
-                key={tag}
-                className="px-2.5 py-0.5 bg-[#eae8df] text-[#3d5e3b] font-mono text-[10px] rounded-full uppercase tracking-wider"
-              >
+              <span key={tag} className="px-2 py-0.5 bg-[#f7f5ef]/10 text-[#f7f5ef] font-mono text-[9px] sm:text-[10px] rounded-full uppercase tracking-wider">
                 {tag}
               </span>
             ))}
           </div>
+
+          <div className="flex items-center gap-6 mt-2 pt-4 border-t border-[#f7f5ef]/20">
+            {project.githubUrl && (
+              <a
+                href={project.githubUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-dm text-xs sm:text-sm font-medium text-[#f7f5ef] hover:underline"
+              >
+                GitHub
+              </a>
+            )}
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-dm text-xs sm:text-sm font-medium text-[#f7f5ef] hover:underline"
+            >
+              Live Site
+            </a>
+          </div>
         </div>
       </div>
 
-      {/* Card Footer */}
-      <div className="px-5 pb-5 pt-3 border-t border-[#d4d0c4]/30 flex items-center justify-between">
-        {project.githubUrl ? (
-          <a
-            href={project.githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-dm text-[13px] font-medium text-[#c4862a] hover:text-[#3d5e3b] transition-colors"
-          >
-            GitHub repo
-          </a>
-        ) : (
-          <span className="text-[11px] font-dm text-[#5c7a5a]/50 italic">
-            Private codebase
-          </span>
-        )}
-
-        <a
-          href={project.liveUrl}
-          className="font-dm text-[13px] font-medium text-[#c4862a] hover:text-[#3d5e3b] transition-colors flex items-center gap-1"
-        >
-          View project →
-        </a>
+      {/* Image Column */}
+      <div className="col hidden sm:block relative rounded-xl overflow-hidden shadow-inner border border-[#f7f5ef]/10">
+        <Image
+          src={placeholderImage}
+          alt={project.title}
+          fill
+          sizes="(max-width: 1000px) 100vw, 35vw"
+          className="object-cover transition-transform duration-700 hover:scale-105"
+        />
       </div>
     </div>
   );
@@ -310,69 +260,143 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 // -------------------------------------------------------------
 // Primary Section Component
 // -------------------------------------------------------------
-export default function Projects({ initialProjects }: ProjectsProps) {
+export default function Projects({ initialProjects, active, progress = 0 }: ProjectsProps) {
   const [selectedFilter, setSelectedFilter] = useState<'All' | 'SAP' | 'Java' | 'AI' | 'Frontend'>('All');
   const filters: ('All' | 'SAP' | 'Java' | 'AI' | 'Frontend')[] = ['All', 'SAP', 'Java', 'AI', 'Frontend'];
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Filter projects client-side
-  const filteredProjects = initialProjects.filter(project => {
-    if (selectedFilter === 'All') return true;
-    return project.category.toUpperCase() === selectedFilter.toUpperCase();
-  });
+  // Filter projects client-side (featured only to fit stack beautifully)
+  const filteredProjects = initialProjects
+    .filter(project => {
+      if (selectedFilter === 'All') return true;
+      return project.category.toUpperCase() === selectedFilter.toUpperCase();
+    })
+    .slice(0, 4); // Clamp to max 4 items for the stack
+
+  const placeholderImages = [
+    '/card-img-1.jpg',
+    '/card-img-2.jpg',
+    '/card-img-3.jpg',
+    '/card-img-4.jpg'
+  ];
+
+  // Drive sticky card stack layout transforms using the slide progress
+  useEffect(() => {
+    const cards = containerRef.current?.querySelectorAll('.card');
+    if (!cards || cards.length === 0) return;
+
+    const totalCards = cards.length;
+    const segmentSize = 1 / totalCards;
+    const cardYOffset = 5; // Config from repo
+    const cardScaleStep = 0.075; // Config from repo
+
+    // If progress is undefined or active is false, reset to initial stacked state
+    if (!active || progress === undefined) {
+      cards.forEach((card, i) => {
+        gsap.set(card, {
+          xPercent: -50,
+          yPercent: -50 + i * cardYOffset,
+          scale: 1 - i * cardScaleStep,
+          rotationX: 0,
+          opacity: 1,
+        });
+      });
+      return;
+    }
+
+    cards.forEach((card, i) => {
+      const activeIndex = Math.min(Math.floor(progress / segmentSize), totalCards - 1);
+      const segProgress = (progress - activeIndex * segmentSize) / segmentSize;
+
+      if (i < activeIndex) {
+        // Card is swiped out upward (repo config)
+        gsap.set(card, {
+          xPercent: -50,
+          yPercent: -250,
+          rotationX: 35,
+          opacity: 0,
+        });
+      } else if (i === activeIndex) {
+        // Card is currently active/swiping (repo config)
+        gsap.set(card, {
+          xPercent: -50,
+          yPercent: gsap.utils.interpolate(-50, -200, segProgress),
+          rotationX: gsap.utils.interpolate(0, 35, segProgress),
+          scale: 1,
+          opacity: 1,
+        });
+      } else {
+        // Card is stacked behind (repo config)
+        const behindIndex = i - activeIndex;
+        const currentYOffset = (behindIndex - segProgress) * cardYOffset;
+        const currentScale = 1 - (behindIndex - segProgress) * cardScaleStep;
+
+        gsap.set(card, {
+          xPercent: -50,
+          yPercent: -50 + currentYOffset,
+          rotationX: 0,
+          scale: currentScale,
+          opacity: 1,
+        });
+      }
+    });
+  }, [progress, active, filteredProjects.length]);
 
   return (
-    <section id="work" className="relative z-20 py-24 bg-[#f7f5ef] border-t border-[#d4d0c4]/45">
-      <div className="max-w-6xl mx-auto px-6 flex flex-col gap-12">
-        
-        {/* Section Header */}
-        <div className="flex flex-col gap-2.5 max-w-2xl">
-          <h2 className="font-cormorant font-semibold text-5xl sm:text-6xl text-[#3d5e3b] leading-tight">
+    <section 
+      ref={containerRef}
+      id="work" 
+      className="relative w-full h-full flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df] dark:bg-[#181c17] overflow-hidden"
+    >
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">
+        <div>
+          <h2 className="font-cormorant font-semibold text-3xl sm:text-5xl text-[var(--forest)] dark:text-[#eae8df] leading-none">
             Selected Work
           </h2>
-          <p className="font-dm font-light text-base sm:text-lg text-[#8fa68a] leading-relaxed">
-            Built with Java, SAP ABAP, React, and a lot of coffee.
+          <p className="font-dm font-light text-xs sm:text-sm text-[var(--sage)] dark:text-[#8fa68a] mt-1.5">
+            Enterprise backends, SAP UI5 utilities, and web animations.
           </p>
         </div>
 
-        {/* Filter Tabs */}
-        <div className="flex flex-wrap gap-2.5">
-          {filters.map(filter => {
-            const isActive = selectedFilter === filter;
-            return (
-              <button
-                key={filter}
-                onClick={() => setSelectedFilter(filter)}
-                className={`px-6 py-2 rounded-full font-dm text-sm font-medium transition-all duration-300 ${
-                  isActive
-                    ? 'bg-[#3d5e3b] text-[#f7f5ef] shadow-sm'
-                    : 'bg-[#eae8df] text-[#5c7a5a] hover:bg-[#d4d0c4]/60'
-                }`}
-              >
-                {filter}
-              </button>
-            );
-          })}
+        {/* Dynamic Filters */}
+        <div className="flex flex-wrap gap-2">
+          {filters.map(filter => (
+            <button
+              key={filter}
+              onClick={() => setSelectedFilter(filter)}
+              className={`px-4 py-1.5 rounded-full font-dm text-xs font-medium transition-all ${
+                selectedFilter === filter
+                  ? 'bg-[var(--forest)] text-[var(--cream)] shadow-sm'
+                  : 'bg-[var(--cream-2)] text-[var(--sage-mid)] hover:bg-[var(--cream-3)]/60'
+              }`}
+            >
+              {filter}
+            </button>
+          ))}
         </div>
+      </div>
 
-        {/* Grid Container */}
-        {filteredProjects.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map((project, idx) => (
-              <ProjectCard
+      {/* 3D Sticky Cards Stack Area */}
+      <div className="flex-1 w-full relative flex items-center justify-center py-8">
+        <div className="sticky-cards w-full h-full relative flex items-center justify-center">
+          {filteredProjects.length > 0 ? (
+            filteredProjects.map((project, idx) => (
+              <StickyCard
                 key={project.id}
                 project={project}
                 index={idx}
+                placeholderImage={placeholderImages[idx % placeholderImages.length]}
               />
-            ))}
-          </div>
-        ) : (
-          <div className="py-16 text-center border border-dashed border-[#d4d0c4] rounded-lg">
-            <p className="font-dm text-[#5c7a5a] italic text-sm">
-              No projects found in this category.
-            </p>
-          </div>
-        )}
-
+            ))
+          ) : (
+            <div className="py-16 text-center border border-dashed border-[#d4d0c4] rounded-lg w-full max-w-lg z-10 bg-[#f7f5ef]/80">
+              <p className="font-dm text-[#5c7a5a] italic text-xs sm:text-sm">
+                No featured projects found in this category.
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </section>
   );

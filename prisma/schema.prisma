@@ -42,3 +42,10 @@ model Achievement {
   certified Boolean  @default(false)
   createdAt DateTime @default(now())
 }
+
+model PageView {
+  id        String   @id @default(uuid())
+  path      String
+  createdAt DateTime @default(now())
+}
+

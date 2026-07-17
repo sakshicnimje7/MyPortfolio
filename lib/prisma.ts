@@ -9,12 +9,12 @@ declare global {
 let prisma: PrismaClient;
 
 if (process.env.NODE_ENV === "production") {
-  const adapter = new PrismaBetterSqlite3({ url: "file:./dev.db" });
+  const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || "file:./dev.db" });
   prisma = new PrismaClient({ adapter });
 } else {
   // Prevent multiple instantiations of Prisma Client in development hot reloading
   if (!globalThis.prisma) {
-    const adapter = new PrismaBetterSqlite3({ url: "file:./dev.db" });
+    const adapter = new PrismaBetterSqlite3({ url: process.env.DATABASE_URL || "file:./dev.db" });
     globalThis.prisma = new PrismaClient({ adapter });
   }
   prisma = globalThis.prisma;

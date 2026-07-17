@@ -19,7 +19,12 @@ interface BubbleSkill {
   animationClass: string;
 }
 
-export default function ScrollReel() {
+interface ScrollReelProps {
+  active?: boolean;
+  progress?: number;
+}
+
+export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   
@@ -28,16 +33,25 @@ export default function ScrollReel() {
   const panel3Ref = useRef<HTMLDivElement>(null);
   const panel4Ref = useRef<HTMLDivElement>(null);
 
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+
   const [isDesktop, setIsDesktop] = useState(false);
   const [hoveredSapIndex, setHoveredSapIndex] = useState<number | null>(null);
   const [hoveredJavaIndex, setHoveredJavaIndex] = useState<number | null>(null);
 
   useEffect(() => {
-    setIsDesktop(window.innerWidth >= 768);
-    const handleResize = () => setIsDesktop(window.innerWidth >= 768);
+    setIsDesktop(window.innerWidth >= 640);
+    const handleResize = () => setIsDesktop(window.innerWidth >= 640);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Scrub the timeline when progress changes (for sliding layout integration)
+  useEffect(() => {
+    if (tlRef.current && progress !== undefined && active) {
+      tlRef.current.progress(progress);
+    }
+  }, [progress, active]);
 
   const sapBubbles: BubbleSkill[] = [
     { name: 'ABAP Cloud', size: 'large', certified: true, position: { top: '32%', left: '32%' }, animationClass: 'animate-bubble-1' },
@@ -77,8 +91,8 @@ export default function ScrollReel() {
   useGSAP(() => {
     const mm = gsap.matchMedia();
 
-    // Only apply scroll-driven clip-path reveals on desktop viewports (>= 768px)
-    mm.add('(min-width: 768px)', () => {
+    // Only apply scroll-driven clip-path reveals on desktop viewports (>= 640px)
+    mm.add('(min-width: 640px)', () => {
       const p2 = panel2Ref.current;
       const p3 = panel3Ref.current;
       const p4 = panel4Ref.current;
@@ -102,17 +116,23 @@ export default function ScrollReel() {
       gsap.set(p4.querySelector('.panel4-title'), { opacity: 0, y: 50 });
       gsap.set(p4.querySelector('.panel4-btn'), { opacity: 0, scale: 0.8 });
 
-      // 2. Create ScrollTrigger Timeline scrubbing through the track with native GSAP pinning
-      const tl = gsap.timeline({
-        scrollTrigger: {
-          trigger: trackRef.current,
-          start: 'top top',
-          end: () => `+=${window.innerHeight * 4}`,
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-        },
-      });
+      // 2. Create ScrollTrigger Timeline scrubbing through the track with native GSAP pinning (or manual progress scrub)
+      let tl: gsap.core.Timeline;
+      if (progress !== undefined) {
+        tl = gsap.timeline({ paused: true });
+        tlRef.current = tl;
+      } else {
+        tl = gsap.timeline({
+          scrollTrigger: {
+            trigger: trackRef.current,
+            start: 'top top',
+            end: () => `+=${window.innerHeight * 4}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+          },
+        });
+      }
 
       // --- PANEL 2 REVEAL ---
       tl.to(p2, {
@@ -199,28 +219,81 @@ export default function ScrollReel() {
       .to({}, { duration: 0.35 }); // Hold state
     });
 
+    // Mobile scroll-triggered entry reveals (< 640px)
+    mm.add('(max-width: 639px)', () => {
+      const p2 = panel2Ref.current;
+      const p3 = panel3Ref.current;
+      const p4 = panel4Ref.current;
+      if (!p2 || !p3 || !p4) return;
+
+      // Initial state of contents for mobile
+      gsap.set(p2.querySelector('.panel-text-col'), { opacity: 0, y: 30 });
+      gsap.set(p2.querySelectorAll('.panel-bubble'), { opacity: 0, scale: 0.8 });
+
+      gsap.set(p3.querySelector('.panel-text-col'), { opacity: 0, y: 30 });
+      gsap.set(p3.querySelectorAll('.panel-pill'), { opacity: 0, x: -10 });
+      gsap.set(p3.querySelectorAll('.panel-bubble'), { opacity: 0, scale: 0.8 });
+
+      gsap.set(p4.querySelector('.panel4-title'), { opacity: 0, y: 30 });
+      gsap.set(p4.querySelector('.panel4-btn'), { opacity: 0, scale: 0.9 });
+
+      // Panel 2 ScrollTrigger
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: p2,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        }
+      })
+      .to(p2.querySelector('.panel-text-col'), { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+      .to(p2.querySelectorAll('.panel-bubble'), { opacity: 1, scale: 1, stagger: 0.03, duration: 0.5, ease: 'back.out(1.2)' }, '-=0.4');
+
+      // Panel 3 ScrollTrigger
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: p3,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        }
+      })
+      .to(p3.querySelector('.panel-text-col'), { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+      .to(p3.querySelectorAll('.panel-pill'), { opacity: 1, x: 0, stagger: 0.02, duration: 0.35, ease: 'power1.out' }, '-=0.4')
+      .to(p3.querySelectorAll('.panel-bubble'), { opacity: 1, scale: 1, stagger: 0.03, duration: 0.5, ease: 'back.out(1.2)' }, '-=0.3');
+
+      // Panel 4 ScrollTrigger
+      gsap.timeline({
+        scrollTrigger: {
+          trigger: p4,
+          start: 'top 85%',
+          toggleActions: 'play none none none',
+        }
+      })
+      .to(p4.querySelector('.panel4-title'), { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' })
+      .to(p4.querySelector('.panel4-btn'), { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.5)' }, '-=0.4');
+    });
+
     // Cleanup is handled automatically by matchMedia!
   }, { scope: trackRef });
 
   return (
-    <div ref={trackRef} className="relative z-10 w-full h-auto md:h-screen md:overflow-hidden">
+    <div id="about" ref={trackRef} className="relative z-10 w-full h-auto sm:h-screen sm:overflow-hidden">
       
       {/* Sticky Screen Viewport (Desktop: GSAP Pinned, Mobile: relative flow) */}
-      <div ref={containerRef} className="w-full h-auto md:h-full flex flex-col relative">
+      <div ref={containerRef} className="w-full h-auto sm:h-full flex flex-col relative">
         
         {/* PANEL 1: Bio */}
         <div
           ref={panel1Ref}
-          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#f7f5ef] z-10 py-16 md:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef] z-10 py-16 sm:py-0"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 w-full max-w-6xl px-6 md:px-12 items-center gap-12 md:gap-24">
+          <div className="grid grid-cols-1 sm:grid-cols-2 w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-24">
             <div className="flex flex-col gap-2">
               <span className="font-cormorant font-light text-4xl sm:text-5xl text-[#3d5e3b]">Hello, I&apos;m</span>
               <h2 className="font-cormorant font-semibold text-7xl sm:text-8xl text-[#3d5e3b] leading-none">Sakshi</h2>
             </div>
             <div className="max-w-md">
               <p className="font-dm font-light text-lg sm:text-xl text-[#5c7a5a] leading-relaxed">
-                Backend engineer. SAP specialist. Creative technologist. I build systems that scale and interfaces that stay with you.
+                Full-stack engineer with SAP expertise and a weakness for beautiful motion.
               </p>
             </div>
           </div>
@@ -229,13 +302,13 @@ export default function ScrollReel() {
         {/* PANEL 2: SAP Universe */}
         <div
           ref={panel2Ref}
-          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#eae8df] z-20 py-16 md:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df] z-20 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
-          <div className="flex flex-col md:flex-row w-full max-w-6xl px-6 md:px-12 items-center gap-12 md:gap-8 justify-between">
+          <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
             
             {/* Column 1: Info */}
-            <div className="w-full md:w-[35%] flex flex-col gap-4 panel-text-col">
+            <div className="w-full sm:w-[35%] flex flex-col gap-4 panel-text-col">
               <h2 className="font-cormorant font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#3d5e3b] leading-tight">
                 SAP Stack
               </h2>
@@ -245,7 +318,7 @@ export default function ScrollReel() {
             </div>
 
             {/* Column 2: Bubbles cluster */}
-            <div className="w-full md:w-[65%] relative h-auto md:h-[480px] flex flex-wrap md:block gap-3 justify-center items-center px-4">
+            <div className="w-full sm:w-[65%] relative h-auto sm:h-[480px] flex flex-wrap sm:block gap-3 justify-center items-center px-4">
               {sapBubbles.map((bubble, idx) => {
                 const isLarge = bubble.size === 'large';
                 const isMedium = bubble.size === 'medium';
@@ -256,8 +329,8 @@ export default function ScrollReel() {
                     className={`
                       aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm panel-bubble
                       hover:bg-[#3d5e3b] hover:text-[#f7f5ef] hover:scale-105 hover:shadow-md
-                      ${isLarge ? 'w-32 h-32 md:w-36 md:h-36 px-2' : isMedium ? 'w-24 h-24 md:w-28 md:h-28 text-xs' : 'w-20 h-20 md:w-24 md:h-24 text-[11px]'}
-                      relative md:absolute ${bubble.animationClass}
+                      ${isLarge ? 'w-32 h-32 sm:w-36 sm:h-36 px-2' : isMedium ? 'w-24 h-24 sm:w-28 sm:h-28 text-xs' : 'w-20 h-20 sm:w-24 sm:h-24 text-[11px]'}
+                      relative sm:absolute ${bubble.animationClass}
                     `}
                     style={{
                       top: isDesktop ? bubble.position.top : 'auto',
@@ -284,13 +357,13 @@ export default function ScrollReel() {
         {/* PANEL 3: Java Universe */}
         <div
           ref={panel3Ref}
-          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#f7f5ef] z-30 py-16 md:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef] z-30 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
-          <div className="flex flex-col md:flex-row w-full max-w-6xl px-6 md:px-12 items-center gap-12 md:gap-8 justify-between">
+          <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
             
             {/* Column 1: Info */}
-            <div className="w-full md:w-[35%] flex flex-col gap-4 panel-text-col">
+            <div className="w-full sm:w-[35%] flex flex-col gap-4 panel-text-col">
               <h2 className="font-cormorant font-semibold text-4xl sm:text-5xl lg:text-6xl text-[#3d5e3b] leading-tight">
                 Java Stack
               </h2>
@@ -311,7 +384,7 @@ export default function ScrollReel() {
             </div>
 
             {/* Column 2: Bubbles cluster */}
-            <div className="w-full md:w-[65%] relative h-auto md:h-[480px] flex flex-wrap md:block gap-3 justify-center items-center px-4">
+            <div className="w-full sm:w-[65%] relative h-auto sm:h-[480px] flex flex-wrap sm:block gap-3 justify-center items-center px-4">
               {javaBubbles.map((bubble, idx) => {
                 const isLarge = bubble.size === 'large';
                 const isMedium = bubble.size === 'medium';
@@ -322,8 +395,8 @@ export default function ScrollReel() {
                     className={`
                       aspect-square rounded-full flex flex-col items-center justify-center text-center border border-[#3d5e3b]/10 bg-[#d4d0c4] text-[#3d5e3b] transition-all duration-300 cursor-default select-none shadow-sm panel-bubble
                       hover:bg-[#3d5e3b] hover:text-[#f7f5ef] hover:scale-105 hover:shadow-md
-                      ${isLarge ? 'w-32 h-32 md:w-36 md:h-36 px-2' : isMedium ? 'w-24 h-24 md:w-28 md:h-28 text-xs' : 'w-20 h-20 md:w-24 md:h-24 text-[11px]'}
-                      relative md:absolute ${bubble.animationClass}
+                      ${isLarge ? 'w-32 h-32 sm:w-36 sm:h-36 px-2' : isMedium ? 'w-24 h-24 sm:w-28 sm:h-28 text-xs' : 'w-20 h-20 sm:w-24 sm:h-24 text-[11px]'}
+                      relative sm:absolute ${bubble.animationClass}
                     `}
                     style={{
                       top: isDesktop ? bubble.position.top : 'auto',
@@ -345,7 +418,7 @@ export default function ScrollReel() {
         {/* PANEL 4: Stats & CTA */}
         <div
           ref={panel4Ref}
-          className="w-full min-h-screen md:h-full md:absolute md:inset-0 flex items-center justify-center bg-[#3d5e3b] z-40 py-16 md:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b] z-40 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col items-center text-center gap-10 px-6 max-w-4xl mx-auto">

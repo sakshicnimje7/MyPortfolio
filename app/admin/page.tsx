@@ -2,6 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
 
 interface Project {
   id: string;
@@ -40,7 +49,10 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [achievements, setAchievements] = useState<Achievement[]>([]);
-  
+  const [chartData, setChartData] = useState<{ name: string; views: number }[]>([]);
+  const [totalViews, setTotalViews] = useState(0);
+  const [mounted, setMounted] = useState(false);
+
   const [loading, setLoading] = useState(true);
 
   // Form states
@@ -86,20 +98,26 @@ export default function AdminPage() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [resProj, resPosts, resAch] = await Promise.all([
+      const [resProj, resPosts, resAch, resAnalytics] = await Promise.all([
         fetch('/api/admin/projects'),
         fetch('/api/admin/posts'),
         fetch('/api/admin/achievements'),
+        fetch('/api/admin/analytics'),
       ]);
-      const [projData, postsData, achData] = await Promise.all([
+      const [projData, postsData, achData, analyticsData] = await Promise.all([
         resProj.json(),
         resPosts.json(),
         resAch.json(),
+        resAnalytics.json(),
       ]);
 
       if (Array.isArray(projData)) setProjects(projData);
       if (Array.isArray(postsData)) setPosts(postsData);
       if (Array.isArray(achData)) setAchievements(achData);
+      if (analyticsData && !analyticsData.error) {
+        setChartData(analyticsData.chartData || []);
+        setTotalViews(analyticsData.totalViews || 0);
+      }
     } catch (e) {
       console.error('Failed to load admin data:', e);
     } finally {
@@ -109,6 +127,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     fetchData();
+    setMounted(true);
   }, []);
 
   // -------------------------------------------------------------
@@ -116,12 +135,22 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   const handleProjectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (
+      !projectForm.title.trim() ||
+      !projectForm.slug.trim() ||
+      !projectForm.description.trim() ||
+      !projectForm.shortDesc.trim() ||
+      !projectForm.tags.trim()
+    ) {
+      alert("All fields are required and cannot be blank.");
+      return;
+    }
     try {
       const isEditing = !!editingProjectId;
-      const url = isEditing 
+      const url = isEditing
         ? `/api/admin/projects/${editingProjectId}`
         : '/api/admin/projects';
-      
+
       const method = isEditing ? 'PATCH' : 'POST';
 
       const response = await fetch(url, {
@@ -197,18 +226,36 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   const handlePostSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!postForm.title.trim() || !postForm.excerpt.trim() || !postForm.content.trim()) {
+      alert("Title, excerpt, and content are required and cannot be blank.");
+      return;
+    }
     try {
       const isEditing = !!editingPostId;
-      const url = isEditing 
+      const url = isEditing
         ? `/api/admin/posts/${editingPostId}`
         : '/api/admin/posts';
-      
+
       const method = isEditing ? 'PATCH' : 'POST';
+
+      const slugify = (text: string) =>
+        text
+          .toString()
+          .toLowerCase()
+          .trim()
+          .replace(/\s+/g, '-')
+          .replace(/[^\w\-]+/g, '')
+          .replace(/\-\-+/g, '-');
+
+      const payload = {
+        ...postForm,
+        slug: postForm.slug.trim() || slugify(postForm.title),
+      };
 
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(postForm),
+        body: JSON.stringify(payload),
       });
 
       if (response.ok) {
@@ -270,12 +317,16 @@ export default function AdminPage() {
   // -------------------------------------------------------------
   const handleAchievementSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!achievementForm.title.trim() || !achievementForm.issuer.trim() || !achievementForm.category.trim()) {
+      alert("Title, issuer, and category are required and cannot be blank.");
+      return;
+    }
     try {
       const isEditing = !!editingAchievementId;
-      const url = isEditing 
+      const url = isEditing
         ? `/api/admin/achievements/${editingAchievementId}`
         : '/api/admin/achievements';
-      
+
       const method = isEditing ? 'PATCH' : 'POST';
 
       const response = await fetch(url, {
@@ -334,7 +385,7 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-[#f7f5ef] font-dm text-[14px] text-[#1a1a16] p-6 sm:p-12 relative z-20">
       <div className="max-w-6xl mx-auto flex flex-col gap-10">
-        
+
         {/* Navigation & Header */}
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-[#d4d0c4] pb-6">
           <div>
@@ -364,8 +415,39 @@ export default function AdminPage() {
             <span className="font-cormorant font-semibold text-4xl text-[#3d5e3b]">{posts.length}</span>
           </div>
           <div className="bg-[#eae8df] border border-[#d4d0c4]/60 p-5 rounded">
-            <h4 className="font-mono text-xs text-[#8fa68a] uppercase tracking-wider mb-1">Page Views (Month)</h4>
-            <span className="font-cormorant font-semibold text-4xl text-[#3d5e3b]">1,420</span>
+            <h4 className="font-mono text-xs text-[#8fa68a] uppercase tracking-wider mb-1">Page Views (30 Days)</h4>
+            <span className="font-cormorant font-semibold text-4xl text-[#3d5e3b]">{totalViews}</span>
+          </div>
+        </div>
+
+        {/* Analytics Section */}
+        <div className="border border-[#d4d0c4] rounded p-6 bg-[#f7f5ef] flex flex-col gap-6">
+          <div>
+            <h2 className="font-cormorant font-semibold text-2xl text-[#3d5e3b]">Views per Page (Last 30 Days)</h2>
+            <p className="text-xs text-[#5c7a5a] mt-1 italic">Real-time analytics collected from route shifts.</p>
+          </div>
+          <div className="w-full h-[300px]">
+            {mounted && chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--cream-3)" opacity={0.5} />
+                  <XAxis dataKey="name" stroke="#5c7a5a" fontSize={11} tickLine={false} />
+                  <YAxis stroke="#5c7a5a" fontSize={11} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'var(--cream-2)',
+                      borderColor: 'var(--cream-3)',
+                      color: 'var(--ink)'
+                    }}
+                  />
+                  <Bar dataKey="views" fill="#3d5e3b" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center border border-dashed border-[#d4d0c4] rounded text-[#5c7a5a] italic text-xs">
+                No view data recorded yet in the last 30 days.
+              </div>
+            )}
           </div>
         </div>
 
@@ -374,7 +456,7 @@ export default function AdminPage() {
         {/* ========================================================= */}
         <div className="border border-[#d4d0c4] rounded p-6 bg-[#f7f5ef] flex flex-col gap-6">
           <h2 className="font-cormorant font-semibold text-2xl text-[#3d5e3b]">Projects</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse border border-[#d4d0c4]">
               <thead>
@@ -393,11 +475,10 @@ export default function AdminPage() {
                     <td className="p-3 border-r border-[#d4d0c4] text-center">
                       <button
                         onClick={() => toggleProjectFeatured(proj)}
-                        className={`px-3 py-1 font-mono text-[10px] uppercase rounded-full ${
-                          proj.featured
+                        className={`px-3 py-1 font-mono text-[10px] uppercase rounded-full ${proj.featured
                             ? 'bg-[#3d5e3b] text-[#f7f5ef]'
                             : 'bg-[#eae8df] text-[#5c7a5a]'
-                        }`}
+                          }`}
                       >
                         {proj.featured ? 'Yes' : 'No'}
                       </button>
@@ -427,7 +508,7 @@ export default function AdminPage() {
             <h3 className="font-cormorant font-semibold text-lg text-[#3d5e3b]">
               {editingProjectId ? 'Edit Project' : 'Add New Project'}
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="font-mono text-xs uppercase text-[#5c7a5a]">Title</label>
@@ -589,7 +670,7 @@ export default function AdminPage() {
         {/* ========================================================= */}
         <div className="border border-[#d4d0c4] rounded p-6 bg-[#f7f5ef] flex flex-col gap-6">
           <h2 className="font-cormorant font-semibold text-2xl text-[#3d5e3b]">Blog Posts</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse border border-[#d4d0c4]">
               <thead>
@@ -606,11 +687,10 @@ export default function AdminPage() {
                     <td className="p-3 border-r border-[#d4d0c4] text-center">
                       <button
                         onClick={() => togglePostPublished(post)}
-                        className={`px-3 py-1 font-mono text-[10px] uppercase rounded-full ${
-                          post.published
+                        className={`px-3 py-1 font-mono text-[10px] uppercase rounded-full ${post.published
                             ? 'bg-[#3d5e3b] text-[#f7f5ef]'
                             : 'bg-[#eae8df] text-[#5c7a5a]'
-                        }`}
+                          }`}
                       >
                         {post.published ? 'Live' : 'Draft'}
                       </button>
@@ -640,7 +720,7 @@ export default function AdminPage() {
             <h3 className="font-cormorant font-semibold text-lg text-[#3d5e3b]">
               {editingPostId ? 'Edit Post' : 'Add New Blog Post'}
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="font-mono text-xs uppercase text-[#5c7a5a]">Title</label>
@@ -752,7 +832,7 @@ export default function AdminPage() {
         {/* ========================================================= */}
         <div className="border border-[#d4d0c4] rounded p-6 bg-[#f7f5ef] flex flex-col gap-6">
           <h2 className="font-cormorant font-semibold text-2xl text-[#3d5e3b]">Achievements & Certifications</h2>
-          
+
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse border border-[#d4d0c4]">
               <thead>
@@ -798,7 +878,7 @@ export default function AdminPage() {
             <h3 className="font-cormorant font-semibold text-lg text-[#3d5e3b]">
               {editingAchievementId ? 'Edit Certification' : 'Add New Achievement/Cert'}
             </h3>
-            
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1">
                 <label className="font-mono text-xs uppercase text-[#5c7a5a]">Title</label>
@@ -837,14 +917,14 @@ export default function AdminPage() {
               </div>
               <div className="flex flex-col gap-1">
                 <label className="font-mono text-xs uppercase text-[#5c7a5a]">Category</label>
-                <select
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. SAP / Course"
                   value={achievementForm.category}
                   onChange={e => setAchievementForm({ ...achievementForm, category: e.target.value })}
                   className="p-2 border border-[#d4d0c4] bg-[#f7f5ef] rounded focus:outline-none focus:border-[#3d5e3b]"
-                >
-                  <option value="SAP">SAP</option>
-                  <option value="Infosys">Infosys</option>
-                </select>
+                />
               </div>
               <div className="flex flex-col justify-end pb-2 pl-2">
                 <div className="flex items-center gap-2">

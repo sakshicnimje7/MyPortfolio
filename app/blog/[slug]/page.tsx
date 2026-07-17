@@ -70,7 +70,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           >
             ← Back to blog
           </Link>
-          
+
           <div className="flex items-center gap-2.5 font-mono text-[10px] uppercase text-[#8fa68a] tracking-wider">
             <span>{formatDate(post.createdAt)}</span>
             <span>·</span>

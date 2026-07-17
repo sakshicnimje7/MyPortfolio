@@ -139,9 +139,9 @@ export default function BlogIndex({ posts }: BlogIndexProps) {
             })}
           </div>
         ) : (
-          <div className="py-16 text-center border border-dashed border-[#d4d0c4] rounded-lg">
-            <p className="font-dm text-[#5c7a5a] italic text-sm">
-              No blog posts found under this tag.
+          <div className="py-16 text-center border border-dashed border-[var(--cream-3)] rounded-lg">
+            <p className="font-dm text-[var(--sage-mid)] italic text-sm">
+              {posts.length === 0 ? "No articles published yet." : "No blog posts found under this tag."}
             </p>
           </div>
         )}

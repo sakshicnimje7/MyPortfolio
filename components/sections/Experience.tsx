@@ -48,10 +48,10 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
   return (
     <div
       ref={cardRef}
-      className="flex flex-col md:flex-row w-full items-center relative mb-12 md:mb-16 last:mb-0"
+      className="flex flex-col sm:flex-row w-full items-center relative mb-12 sm:mb-16 last:mb-0"
     >
       {/* Center line dot (Desktop only, centered on the line) */}
-      <div className="hidden md:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
+      <div className="hidden sm:block absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
         <motion.div
           initial={{ scale: 0 }}
           animate={isInView ? { scale: 1 } : { scale: 0 }}
@@ -61,12 +61,12 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
       </div>
 
       {/* Mobile dot (placed on the left line) */}
-      <div className="md:hidden absolute left-3.5 top-6 z-10">
+      <div className="sm:hidden absolute left-3.5 top-6 z-10">
         <div className="w-3 h-3 rounded-full bg-[#c4862a] border-2 border-[#eae8df] shadow-sm" />
       </div>
 
       {/* Left Column (even cards render here, odd dates render here) */}
-      <div className="w-full md:w-1/2 pr-0 md:pr-12 flex justify-end order-2 md:order-1 pl-12 md:pl-0">
+      <div className="w-full sm:w-1/2 pr-0 sm:pr-12 flex justify-end order-2 sm:order-1 pl-12 sm:pl-0">
         {isEven ? (
           <motion.div
             initial={{ opacity: 0, x: -50 }}
@@ -74,13 +74,13 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="w-full bg-[#f7f5ef] border border-[#d4d0c4] rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
           >
-            <span className="font-mono text-[11px] text-[#c4862a] uppercase tracking-wider font-semibold block md:hidden mb-2">
+            <span className="font-mono text-[11px] text-[var(--amber)] uppercase tracking-[0.12em] font-semibold block sm:hidden mb-2">
               {item.duration}
             </span>
-            <h3 className="font-cormorant font-semibold text-xl text-[#3d5e3b] leading-tight mb-1">
+            <h3 className="font-cormorant font-semibold text-xl text-[var(--forest)] leading-tight mb-1">
               {item.role}
             </h3>
-            <h4 className="font-dm font-medium text-xs text-[#1a1a16]/70 mb-3 tracking-wide">
+            <h4 className="font-dm font-medium text-xs text-[var(--ink)]/70 mb-3 tracking-wide">
               {item.company}
             </h4>
             {item.note && (
@@ -92,7 +92,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-0.5 bg-[#eae8df] text-[#3d5e3b] font-mono text-[9px] rounded-full uppercase tracking-wider"
+                  className="px-2.5 py-0.5 bg-[var(--cream-2)] text-[var(--forest)] font-mono text-[9px] rounded-full uppercase tracking-[0.12em]"
                 >
                   {tag}
                 </span>
@@ -100,8 +100,8 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             </div>
           </motion.div>
         ) : (
-          <div className="hidden md:flex flex-col items-end justify-center w-full pr-4">
-            <span className="font-dm font-medium text-sm text-[#c4862a] uppercase tracking-widest">
+          <div className="hidden sm:flex flex-col items-end justify-center w-full pr-4">
+            <span className="font-dm font-medium text-sm text-[var(--amber)] uppercase tracking-[0.12em]">
               {item.duration}
             </span>
           </div>
@@ -109,7 +109,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
       </div>
 
       {/* Right Column (odd cards render here, even dates render here) */}
-      <div className="w-full md:w-1/2 pl-12 pr-0 md:pl-12 flex justify-start order-3 md:order-2">
+      <div className="w-full sm:w-1/2 pl-12 pr-0 sm:pl-12 flex justify-start order-3 sm:order-2">
         {!isEven ? (
           <motion.div
             initial={{ opacity: 0, x: 50 }}
@@ -117,13 +117,13 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             className="w-full bg-[#f7f5ef] border border-[#d4d0c4] rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
           >
-            <span className="font-mono text-[11px] text-[#c4862a] uppercase tracking-wider font-semibold block md:hidden mb-2">
+            <span className="font-mono text-[11px] text-[var(--amber)] uppercase tracking-[0.12em] font-semibold block sm:hidden mb-2">
               {item.duration}
             </span>
-            <h3 className="font-cormorant font-semibold text-xl text-[#3d5e3b] leading-tight mb-1">
+            <h3 className="font-cormorant font-semibold text-xl text-[var(--forest)] leading-tight mb-1">
               {item.role}
             </h3>
-            <h4 className="font-dm font-medium text-xs text-[#1a1a16]/70 mb-3 tracking-wide">
+            <h4 className="font-dm font-medium text-xs text-[var(--ink)]/70 mb-3 tracking-wide">
               {item.company}
             </h4>
             {item.note && (
@@ -135,7 +135,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="px-2.5 py-0.5 bg-[#eae8df] text-[#3d5e3b] font-mono text-[9px] rounded-full uppercase tracking-wider"
+                  className="px-2.5 py-0.5 bg-[var(--cream-2)] text-[var(--forest)] font-mono text-[9px] rounded-full uppercase tracking-[0.12em]"
                 >
                   {tag}
                 </span>
@@ -143,8 +143,8 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             </div>
           </motion.div>
         ) : (
-          <div className="hidden md:flex flex-col items-start justify-center w-full pl-4">
-            <span className="font-dm font-medium text-sm text-[#c4862a] uppercase tracking-widest">
+          <div className="hidden sm:flex flex-col items-start justify-center w-full pl-4">
+            <span className="font-dm font-medium text-sm text-[var(--amber)] uppercase tracking-[0.12em]">
               {item.duration}
             </span>
           </div>
@@ -155,8 +155,8 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
 }
 
 export default function Experience() {
-  const lineRef = useRef<HTMLDivElement>(null);
-  const isLineInView = useInView(lineRef, { once: true });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isLineInView = useInView(containerRef, { once: true, margin: "-100px 0px" });
 
   return (
     <section id="experience" className="relative z-20 py-24 bg-[#eae8df] border-t border-[#d4d0c4]/45">
@@ -164,20 +164,19 @@ export default function Experience() {
         
         {/* Section Header */}
         <div className="flex flex-col gap-2.5 max-w-xl mx-auto text-center">
-          <h2 className="font-cormorant font-semibold text-5xl sm:text-6xl text-[#3d5e3b] leading-tight">
+          <h2 className="font-cormorant font-semibold text-[36px] sm:text-[64px] text-[var(--forest)] leading-[1.0] sm:leading-[1.2]">
             Journey & Experience
           </h2>
-          <p className="font-dm font-light text-base sm:text-lg text-[#8fa68a] leading-relaxed">
+          <p className="font-dm font-light text-base sm:text-lg text-[var(--sage)] leading-relaxed">
             A timeline of building enterprise backends, SAP integrations, and academic foundations.
           </p>
         </div>
 
         {/* Timeline Container */}
-        <div className="relative w-full flex flex-col items-center">
+        <div ref={containerRef} className="relative w-full flex flex-col items-center">
           {/* Vertical Center Line (Desktop) */}
-          <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-[#d4d0c4] transform -translate-x-1/2">
+          <div className="hidden sm:block absolute left-1/2 top-0 bottom-0 w-[1px] bg-[#d4d0c4] transform -translate-x-1/2">
             <motion.div
-              ref={lineRef}
               initial={{ height: 0 }}
               animate={isLineInView ? { height: '100%' } : { height: 0 }}
               transition={{ duration: 1.2, ease: 'easeInOut' }}
@@ -186,7 +185,7 @@ export default function Experience() {
           </div>
 
           {/* Vertical Left Line (Mobile only) */}
-          <div className="md:hidden absolute left-5 top-0 bottom-0 w-[1px] bg-[#d4d0c4]" />
+          <div className="sm:hidden absolute left-5 top-0 bottom-0 w-[1px] bg-[#d4d0c4]" />
 
           {/* Timeline Cards */}
           <div className="w-full flex flex-col relative z-20">
