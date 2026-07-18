@@ -46,7 +46,7 @@ export default function Certifications() {
     : certifications;
 
   return (
-    <section id="certifications" className="relative z-20 py-24 bg-[#f7f5ef]/80 dark:bg-[#111410]/85 backdrop-blur-[2px] border-t border-[#d4d0c4]/45">
+    <section id="certifications" className="relative z-20 py-24 bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[0.5px] border-t border-[#d4d0c4]/45">
       <div className="max-w-5xl mx-auto px-6 flex flex-col gap-16 items-center">
         
         {/* Section Header */}

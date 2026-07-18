@@ -14,7 +14,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative z-20 min-h-screen flex flex-col justify-between bg-[#3d5e3b]/85 dark:bg-[#1c2a1c]/90 backdrop-blur-[4px] text-[#f7f5ef] py-16 px-6 sm:px-12 md:px-24"
+      className="relative z-20 min-h-screen flex flex-col justify-between bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[1px] text-[#f7f5ef] py-16 px-6 sm:px-12 md:px-24"
     >
       {/* Top spacer for layout alignment */}
       <div className="h-10" />

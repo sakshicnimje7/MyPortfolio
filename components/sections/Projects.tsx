@@ -173,11 +173,11 @@ function StickyCard({
 
   const getCategoryColor = (cat: string) => {
     switch (cat.toUpperCase()) {
-      case 'SAP': return '#3d2fa9';
-      case 'JAVA': return '#ff7722';
-      case 'AI': return '#ff3d33';
-      case 'FRONTEND': return '#785f47';
-      default: return '#5c7a5a';
+      case 'SAP': return '#253d23'; // Deep Forest Green matching --forest
+      case 'JAVA': return '#705423'; // Warm Earthy Ochre/Amber
+      case 'AI': return '#303c2e'; // Sophisticated Dark Slate/Olive
+      case 'FRONTEND': return '#4e614a'; // Soft Sage Green matching --sage
+      default: return '#5c7a5a'; // Mid Sage Green
     }
   };
 
@@ -373,7 +373,7 @@ export default function Projects({ initialProjects, active, progress = 0 }: Proj
     <section 
       ref={containerRef}
       id="work" 
-      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df]/80 dark:bg-[#111410]/85 backdrop-blur-[2px] overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[0.5px] overflow-hidden"
     >
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">

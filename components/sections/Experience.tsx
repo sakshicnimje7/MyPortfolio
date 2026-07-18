@@ -159,7 +159,7 @@ export default function Experience() {
   const isLineInView = useInView(containerRef, { once: true, margin: "-100px 0px" });
 
   return (
-    <section id="experience" className="relative z-20 py-24 bg-[#eae8df]/85 dark:bg-[#111410]/90 backdrop-blur-[2px] border-t border-[#d4d0c4]/45">
+    <section id="experience" className="relative z-20 py-24 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[0.5px] border-t border-[#d4d0c4]/45">
       <div className="max-w-5xl mx-auto px-6 flex flex-col gap-16">
         
         {/* Section Header */}

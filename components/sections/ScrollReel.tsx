@@ -145,6 +145,11 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         duration: 0.6,
         ease: 'power2.inOut',
       })
+      .to(panel1Ref.current, {
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.inOut',
+      }, '-=0.6')
       .to(p2.querySelector('.panel-text-col'), {
         opacity: 1,
         y: 0,
@@ -171,6 +176,11 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         duration: 0.6,
         ease: 'power2.inOut',
       })
+      .to(p2, {
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.inOut',
+      }, '-=0.6')
       .to(p3.querySelector('.panel-text-col'), {
         opacity: 1,
         y: 0,
@@ -204,6 +214,11 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         duration: 0.6,
         ease: 'power2.inOut',
       })
+      .to(p3, {
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.inOut',
+      }, '-=0.6')
       .to(p4.querySelector('.panel4-title'), {
         opacity: 1,
         y: 0,
@@ -284,7 +299,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 1: Bio */}
         <div
           ref={panel1Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/70 dark:bg-[#111410]/85 backdrop-blur-[2px] z-10 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[0.5px] z-10 py-16 sm:py-0"
         >
           <div className="flex flex-col w-full max-w-6xl px-6 sm:px-12 gap-8 sm:gap-12">
             
@@ -352,7 +367,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 2: SAP Universe */}
         <div
           ref={panel2Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df]/75 dark:bg-[#181c17]/85 backdrop-blur-[2px] z-20 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df]/35 dark:bg-[#181c17]/45 backdrop-blur-[0.5px] z-20 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -407,7 +422,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 3: Java Universe */}
         <div
           ref={panel3Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/70 dark:bg-[#111410]/85 backdrop-blur-[2px] z-30 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[0.5px] z-30 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -468,7 +483,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 4: Stats & CTA */}
         <div
           ref={panel4Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b]/85 dark:bg-[#1c2a1c]/90 backdrop-blur-[4px] z-40 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[1px] z-40 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col items-center text-center gap-10 px-6 max-w-4xl mx-auto">
