@@ -452,7 +452,7 @@ export default function Home() {
           {/* About Me Content morphs inside the card frame */}
           <div 
             style={{ opacity: aboutOpacity, pointerEvents: aboutOpacity > 0.1 ? 'auto' : 'none' }}
-            className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[3px] py-16 sm:py-0 transition-opacity duration-150"
+            className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[8px] py-16 sm:py-0 transition-opacity duration-150"
           >
             <div className="flex flex-col w-full max-w-6xl px-6 sm:px-12 gap-8 sm:gap-12">
               

@@ -275,7 +275,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 2: SAP Universe */}
         <div
           ref={panel2Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df]/35 dark:bg-[#181c17]/45 backdrop-blur-[3px] z-20 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df]/35 dark:bg-[#181c17]/45 backdrop-blur-[8px] z-20 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -330,7 +330,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 3: Java Universe */}
         <div
           ref={panel3Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[3px] z-30 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[8px] z-30 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -391,7 +391,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 4: Stats & CTA */}
         <div
           ref={panel4Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[3px] z-40 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[8px] z-40 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col items-center text-center gap-10 px-6 max-w-4xl mx-auto">

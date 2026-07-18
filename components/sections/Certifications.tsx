@@ -46,7 +46,7 @@ export default function Certifications() {
     : certifications;
 
   return (
-    <section id="certifications" className="relative z-20 py-24 bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[3px] border-t border-[#d4d0c4]/45">
+    <section id="certifications" className="relative z-20 py-24 bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[8px] border-t border-[#d4d0c4]/45">
       <div className="max-w-5xl mx-auto px-6 flex flex-col gap-16 items-center">
         
         {/* Section Header */}
@@ -116,7 +116,7 @@ export default function Certifications() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: idx * 0.1, ease: 'easeOut' }}
-                className="col-span-1 w-[180px] h-[180px] rounded-lg border border-[var(--cream-3)] bg-[var(--cream)]/80 dark:bg-[#181c17]/85 backdrop-blur-[3px] overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md hover:border-[var(--amber)] hover:-translate-y-1 transition-all duration-300 select-none group"
+                className="col-span-1 w-[180px] h-[180px] rounded-lg border border-[var(--cream-3)] bg-[var(--cream)]/80 dark:bg-[#181c17]/85 backdrop-blur-[8px] overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md hover:border-[var(--amber)] hover:-translate-y-1 transition-all duration-300 select-none group"
               >
                 {/* Colored Top Issuer logo area */}
                 <div className="h-[44px] w-full bg-[var(--cream-2)] flex items-center justify-center border-b border-[var(--cream-3)]/30">
