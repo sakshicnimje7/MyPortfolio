@@ -72,7 +72,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             initial={{ opacity: 0, x: -50 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full bg-[#f7f5ef]/80 dark:bg-[#181c17]/85 backdrop-blur-[2px] border border-[#d4d0c4]/40 rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
+            className="w-full bg-[#f7f5ef]/80 dark:bg-[#181c17]/85 backdrop-blur-[3px] border border-[#d4d0c4]/40 rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
           >
             <span className="font-mono text-[11px] text-[var(--amber)] uppercase tracking-[0.12em] font-semibold block sm:hidden mb-2">
               {item.duration}
@@ -84,7 +84,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
               {item.company}
             </h4>
             {item.note && (
-              <p className="font-dm font-light text-xs text-[#5c7a5a] italic mb-3">
+              <p className="font-dm font-normal text-xs text-[#5c7a5a] italic mb-3">
                 &ldquo;{item.note}&rdquo;
               </p>
             )}
@@ -115,7 +115,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
             initial={{ opacity: 0, x: 50 }}
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full bg-[#f7f5ef]/80 dark:bg-[#181c17]/85 backdrop-blur-[2px] border border-[#d4d0c4]/40 rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
+            className="w-full bg-[#f7f5ef]/80 dark:bg-[#181c17]/85 backdrop-blur-[3px] border border-[#d4d0c4]/40 rounded-[4px] p-5 shadow-sm text-left relative hover:border-[#c4862a] transition-colors"
           >
             <span className="font-mono text-[11px] text-[var(--amber)] uppercase tracking-[0.12em] font-semibold block sm:hidden mb-2">
               {item.duration}
@@ -127,7 +127,7 @@ function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }
               {item.company}
             </h4>
             {item.note && (
-              <p className="font-dm font-light text-xs text-[#5c7a5a] italic mb-3">
+              <p className="font-dm font-normal text-xs text-[#5c7a5a] italic mb-3">
                 &ldquo;{item.note}&rdquo;
               </p>
             )}
@@ -159,7 +159,7 @@ export default function Experience() {
   const isLineInView = useInView(containerRef, { once: true, margin: "-100px 0px" });
 
   return (
-    <section id="experience" className="relative z-20 py-24 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[0.5px] border-t border-[#d4d0c4]/45">
+    <section id="experience" className="relative z-20 py-24 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[3px] border-t border-[#d4d0c4]/45">
       <div className="max-w-5xl mx-auto px-6 flex flex-col gap-16">
         
         {/* Section Header */}
@@ -167,7 +167,7 @@ export default function Experience() {
           <h2 className="font-cormorant font-semibold text-[36px] sm:text-[64px] text-[var(--forest)] leading-[1.0] sm:leading-[1.2]">
             Journey & Experience
           </h2>
-          <p className="font-dm font-light text-base sm:text-lg text-[var(--sage)] leading-relaxed">
+          <p className="font-dm font-normal text-base sm:text-lg text-[var(--sage)] leading-relaxed">
             A timeline of building enterprise backends, SAP integrations, and academic foundations.
           </p>
         </div>

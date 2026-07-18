@@ -208,7 +208,7 @@ function StickyCard({
           <h2 className="font-cormorant font-semibold text-3xl sm:text-5xl text-[#f7f5ef] leading-tight">
             {project.title}
           </h2>
-          <p className="font-dm font-light text-sm sm:text-base text-[#f7f5ef]/90 leading-relaxed max-w-md normal-case">
+          <p className="font-dm font-normal text-sm sm:text-base text-[#f7f5ef]/90 leading-relaxed max-w-md normal-case">
             {project.shortDesc}
           </p>
         </div>
@@ -373,7 +373,7 @@ export default function Projects({ initialProjects, active, progress = 0 }: Proj
     <section 
       ref={containerRef}
       id="work" 
-      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[0.5px] overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df]/35 dark:bg-[#111410]/45 backdrop-blur-[3px] overflow-hidden"
     >
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">
@@ -381,7 +381,7 @@ export default function Projects({ initialProjects, active, progress = 0 }: Proj
           <h2 className="font-cormorant font-semibold text-3xl sm:text-5xl text-[var(--forest)] dark:text-[#eae8df] leading-none">
             Selected Work
           </h2>
-          <p className="font-dm font-light text-xs sm:text-sm text-[var(--sage)] dark:text-[#8fa68a] mt-1.5">
+          <p className="font-dm font-normal text-xs sm:text-sm text-[var(--sage)] dark:text-[#8fa68a] mt-1.5">
             Enterprise backends, SAP UI5 utilities, and web animations.
           </p>
         </div>

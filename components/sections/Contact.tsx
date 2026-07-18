@@ -14,7 +14,7 @@ export default function Contact() {
   return (
     <section 
       id="contact" 
-      className="relative z-20 min-h-screen flex flex-col justify-between bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[1px] text-[#f7f5ef] py-16 px-6 sm:px-12 md:px-24"
+      className="relative z-20 min-h-screen flex flex-col justify-between bg-[#3d5e3b]/65 dark:bg-[#1c2a1c]/70 backdrop-blur-[3px] text-[#f7f5ef] py-16 px-6 sm:px-12 md:px-24"
     >
       {/* Top spacer for layout alignment */}
       <div className="h-10" />
@@ -23,7 +23,7 @@ export default function Contact() {
       <div className="flex-1 flex flex-col items-center justify-center text-center gap-6">
         <div className="flex flex-col select-none">
           <h2 
-            className="font-cormorant font-light text-[#f7f5ef] leading-none"
+            className="font-cormorant font-normal text-[#f7f5ef] leading-none"
             style={{ fontSize: 'clamp(44px, 7vw, 112px)' }}
           >
             Let&apos;s build
