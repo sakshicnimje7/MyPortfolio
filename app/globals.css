@@ -155,10 +155,15 @@
 }
 
 .navbar-background {
-  background-color: var(--background);
-  border: 1px solid var(--cream-3);
+  background: linear-gradient(135deg, var(--cream) 0%, var(--cream-2) 100%);
+  border: 1px solid rgba(196, 134, 42, 0.24);
+  box-shadow: 
+    0 25px 50px -12px rgba(26, 26, 22, 0.15),
+    0 0 45px rgba(92, 122, 90, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
   pointer-events: none;
   z-index: 2;
+  border-radius: 4px;
 }
 
 .navbar-items {
@@ -240,13 +245,12 @@
 
 .sticky-cards .card {
   position: absolute;
-  top: 55%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 75%;
-  height: 75%;
-  max-width: 900px;
-  max-height: 520px;
+  width: 90%;
+  max-width: 820px;
+  height: 460px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -256,6 +260,14 @@
   color: #fff;
   transform-origin: center bottom;
   will-change: transform, opacity;
+}
+
+@media (max-width: 640px) {
+  .sticky-cards .card {
+    height: 380px;
+    padding: 1.5rem;
+    gap: 1rem;
+  }
 }
 
 .card .col {

@@ -3,7 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import * as THREE from 'three';
+
+gsap.registerPlugin(ScrollTrigger);
 
 interface Project {
   id: string;
@@ -280,73 +283,97 @@ export default function Projects({ initialProjects, active, progress = 0 }: Proj
     '/card-img-4.jpg'
   ];
 
-  // Drive sticky card stack layout transforms using the slide progress
+  // Drive sticky card stack layout transforms using the slide progress or internal ScrollTrigger
   useEffect(() => {
     const cards = containerRef.current?.querySelectorAll('.card');
     if (!cards || cards.length === 0) return;
 
     const totalCards = cards.length;
     const segmentSize = 1 / totalCards;
-    const cardYOffset = 5; // Config from repo
-    const cardScaleStep = 0.075; // Config from repo
+    const cardYOffset = 6;
+    const cardScaleStep = 0.075;
 
-    // If progress is undefined or active is false, reset to initial stacked state
-    if (!active || progress === undefined) {
+    let scrollTriggerInstance: ScrollTrigger | null = null;
+
+    const updateStack = (prog: number) => {
       cards.forEach((card, i) => {
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: -50 + i * cardYOffset,
-          scale: 1 - i * cardScaleStep,
-          rotationX: 0,
-          opacity: 1,
-        });
+        const activeIndex = Math.min(Math.floor(prog / segmentSize), totalCards - 1);
+        const segProgress = (prog - activeIndex * segmentSize) / segmentSize;
+
+        if (i < activeIndex) {
+          // Card is swiped out upward (repo config)
+          gsap.set(card, {
+            xPercent: -50,
+            yPercent: -250,
+            rotationX: 35,
+            opacity: 0,
+          });
+        } else if (i === activeIndex) {
+          // Card is currently active/swiping (repo config)
+          gsap.set(card, {
+            xPercent: -50,
+            yPercent: gsap.utils.interpolate(-50, -200, segProgress),
+            rotationX: gsap.utils.interpolate(0, 35, segProgress),
+            scale: 1,
+            opacity: 1,
+          });
+        } else {
+          // Card is stacked behind (repo config)
+          const behindIndex = i - activeIndex;
+          const currentYOffset = (behindIndex - segProgress) * cardYOffset;
+          const currentScale = 1 - (behindIndex - segProgress) * cardScaleStep;
+
+          gsap.set(card, {
+            xPercent: -50,
+            yPercent: -50 + currentYOffset,
+            rotationX: 0,
+            scale: currentScale,
+            opacity: 1,
+          });
+        }
       });
-      return;
-    }
+    };
 
-    cards.forEach((card, i) => {
-      const activeIndex = Math.min(Math.floor(progress / segmentSize), totalCards - 1);
-      const segProgress = (progress - activeIndex * segmentSize) / segmentSize;
-
-      if (i < activeIndex) {
-        // Card is swiped out upward (repo config)
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: -250,
-          rotationX: 35,
-          opacity: 0,
-        });
-      } else if (i === activeIndex) {
-        // Card is currently active/swiping (repo config)
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: gsap.utils.interpolate(-50, -200, segProgress),
-          rotationX: gsap.utils.interpolate(0, 35, segProgress),
-          scale: 1,
-          opacity: 1,
+    if (progress !== undefined && active !== undefined) {
+      if (!active) {
+        // Reset to initial stacked state
+        cards.forEach((card, i) => {
+          gsap.set(card, {
+            xPercent: -50,
+            yPercent: -50 + i * cardYOffset,
+            scale: 1 - i * cardScaleStep,
+            rotationX: 0,
+            opacity: 1,
+          });
         });
       } else {
-        // Card is stacked behind (repo config)
-        const behindIndex = i - activeIndex;
-        const currentYOffset = (behindIndex - segProgress) * cardYOffset;
-        const currentScale = 1 - (behindIndex - segProgress) * cardScaleStep;
-
-        gsap.set(card, {
-          xPercent: -50,
-          yPercent: -50 + currentYOffset,
-          rotationX: 0,
-          scale: currentScale,
-          opacity: 1,
-        });
+        updateStack(progress);
       }
-    });
+    } else {
+      // Create internal ScrollTrigger to pin and scrub projects stack during page scroll
+      scrollTriggerInstance = ScrollTrigger.create({
+        trigger: containerRef.current,
+        start: 'top top',
+        end: '+=150%', // Pin for 1.5 screen heights of scroll
+        pin: true,
+        pinSpacing: true,
+        scrub: 0.5,
+        onUpdate: (self) => {
+          updateStack(self.progress);
+        },
+      });
+    }
+
+    return () => {
+      if (scrollTriggerInstance) scrollTriggerInstance.kill();
+    };
   }, [progress, active, filteredProjects.length]);
 
   return (
     <section 
       ref={containerRef}
       id="work" 
-      className="relative w-full h-full flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df] dark:bg-[#181c17] overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df] dark:bg-[#181c17] overflow-hidden"
     >
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">

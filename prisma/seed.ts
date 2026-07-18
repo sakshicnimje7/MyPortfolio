@@ -6,28 +6,40 @@ const prisma = new PrismaClient({ adapter });
 
 const projects = [
   {
-    title: "DebugChronicle",
-    slug: "debug-chronicle",
-    description: "A collaborative debugging and developer ticketing system designed for enterprise teams. Features real-time log ingestion, issue tracking, and integration with MySQL for audit histories.",
-    shortDesc: "Collaborative developer ticketing and real-time logs tracking system.",
-    tags: "Spring Boot,REST API,MySQL",
-    category: "Java",
-    githubUrl: "https://github.com/sakshicnimje7/debug-chronicle",
+    title: "Sales Order Automation & UI5 Dashboard",
+    slug: "sales-order-automation-ui5-dashboard",
+    description: "Built an end-to-end SAP full-stack application using SAP UI5 frontend and ABAP OData services. Automated sales order creation using BAPI_SALESORDER_CREATEFROMDAT2, developed CDS Views and analytical dashboards for sales KPIs, and configured SAP Cloud Connector to optimize ABAP SQL performance.",
+    shortDesc: "Full-stack SAP UI5 dashboard with ABAP OData integration and BAPI automation.",
+    tags: "SAP UI5,ABAP,BTP,OData",
+    category: "SAP",
+    githubUrl: "https://github.com/sakshicnimje7/sales-order-automation",
     liveUrl: "#",
     featured: true,
     order: 1
   },
   {
-    title: "GHOSTWRITER",
-    slug: "ghostwriter",
-    description: "An automated document generation and text styling engine powered by NLP automation. Simplifies standard reporting and technical documentation generation.",
-    shortDesc: "NLP-driven automated documentation and reports generation engine.",
-    tags: "Python,NLP,Automation",
-    category: "AI",
-    githubUrl: "https://github.com/sakshicnimje7/ghostwriter",
+    title: "Digital Wellness Marketplace",
+    slug: "digital-wellness-marketplace",
+    description: "Developed a full-stack e-commerce and appointment booking platform using Spring Boot, React.js, and MySQL. Designed secure REST APIs with JWT authentication and Role-Based Access Control (RBAC), managed relational databases with Hibernate/JPA, and integrated an AI-based therapy recommendation engine.",
+    shortDesc: "E-commerce and booking platform built with Spring Boot, React, and MySQL.",
+    tags: "Spring Boot,React.js,MySQL,JWT",
+    category: "Java",
+    githubUrl: "https://github.com/sakshicnimje7/wellness-marketplace",
     liveUrl: "#",
     featured: true,
     order: 2
+  },
+  {
+    title: "Online Quiz & Examination System",
+    slug: "online-quiz-examination-system",
+    description: "Developed a secure online examination portal using Spring Boot and MySQL. Implemented stateful authentication, dynamic quiz management routines, Docker-based runner deployments, and engineered custom backend modules for question management and automated result evaluation.",
+    shortDesc: "Secure quiz and test portal featuring Spring Boot backend and Docker deployment.",
+    tags: "Spring Boot,MySQL,Docker,REST APIs",
+    category: "Java",
+    githubUrl: "https://github.com/sakshicnimje7/online-quiz-system",
+    liveUrl: "#",
+    featured: true,
+    order: 3
   },
   {
     title: "Pulse EWM Task Optimizer",
@@ -38,32 +50,8 @@ const projects = [
     category: "SAP",
     githubUrl: "https://github.com/sakshicnimje7/pulse-ewm",
     liveUrl: "#",
-    featured: true,
-    order: 3
-  },
-  {
-    title: "Wanderlust",
-    slug: "wanderlust",
-    description: "An immersive travel discovery application featuring high-performance GSAP page-reveals, responsive layout shifts, and dynamic theme synchronization.",
-    shortDesc: "Immersive travel portal built with GSAP and custom interactive animations.",
-    tags: "React,GSAP,CSS",
-    category: "Frontend",
-    githubUrl: "https://github.com/sakshicnimje7/wanderlust",
-    liveUrl: "#",
-    featured: true,
-    order: 4
-  },
-  {
-    title: "OpenEnv",
-    slug: "openenv",
-    description: "A lightweight environment variable and deployment configuration dashboard. Streamlines Docker container configurations and automates DevOps variables validation.",
-    shortDesc: "Lightweight container deployment manager and environment config engine.",
-    tags: "Spring Boot,Docker,DevOps",
-    category: "Java",
-    githubUrl: "https://github.com/sakshicnimje7/openenv",
-    liveUrl: "#",
     featured: false,
-    order: 5
+    order: 4
   },
   {
     title: "Dark Warehouse Automation Hub",
@@ -75,67 +63,7 @@ const projects = [
     githubUrl: "https://github.com/sakshicnimje7/dark-warehouse",
     liveUrl: "#",
     featured: false,
-    order: 6
-  },
-  {
-    title: "Vision Pick EWM System",
-    slug: "vision-pick-ewm",
-    description: "Pick-by-vision terminal client interface optimized for warehouse personnel. Accesses core inventory levels via custom CDS Views and renders responsive SAP UI5 templates.",
-    shortDesc: "Pick-by-vision SAP UI5 application utilizing high-performance CDS Views.",
-    tags: "SAP UI5,ABAP,CDS Views",
-    category: "SAP",
-    githubUrl: "https://github.com/sakshicnimje7/vision-pick-ewm",
-    liveUrl: "#",
-    featured: false,
-    order: 7
-  },
-  {
-    title: "Warehouse Inventory Health Dashboard",
-    slug: "wihd",
-    description: "Global stock inventory telemetry dashboard hosted on SAP BTP. Highlights inventory metrics, turnover rates, and warehouse transaction health in real-time.",
-    shortDesc: "Enterprise inventory health dashboard running on SAP BTP analytics.",
-    tags: "SAP BTP,Analytics,SAPUI5",
-    category: "SAP",
-    githubUrl: "https://github.com/sakshicnimje7/wihd",
-    liveUrl: "#",
-    featured: false,
-    order: 8
-  },
-  {
-    title: "Groot AI",
-    slug: "groot-ai",
-    description: "A smart botanical assistant that integrates with microcontrollers to monitor soil telemetry and uses Java Spring Boot backends and LLMs to analyze plant health.",
-    shortDesc: "Smart botanical assistant utilizing Spring Boot backends and LLMs.",
-    tags: "Java,AI,Spring Boot",
-    category: "AI",
-    githubUrl: "https://github.com/sakshicnimje7/groot-ai",
-    liveUrl: "#",
-    featured: false,
-    order: 9
-  },
-  {
-    title: "WellnessMarketplace Backend",
-    slug: "wellness-marketplace",
-    description: "Secure e-commerce API catering to health and wellness products. Features JWT stateless session auth, MySQL queries mapping, and integrated product rating calculations.",
-    shortDesc: "E-commerce API for wellness products with secure JWT auth.",
-    tags: "Spring Boot,JWT,MySQL,React",
-    category: "Java",
-    githubUrl: "https://github.com/sakshicnimje7/wellness-marketplace",
-    liveUrl: "#",
-    featured: false,
-    order: 10
-  },
-  {
-    title: "Online Exam Portal",
-    slug: "online-exam-portal",
-    description: "Highly scalable examinee runtime container platform. Uses Docker sandboxes to isolate code compile challenges and MySQL to log real-time test compliance metrics.",
-    shortDesc: "Scalable online test portal featuring sandboxed code runtimes.",
-    tags: "Spring Boot,Docker,MySQL",
-    category: "Java",
-    githubUrl: "https://github.com/sakshicnimje7/online-exam-portal",
-    liveUrl: "#",
-    featured: false,
-    order: 11
+    order: 5
   }
 ];
 
@@ -160,35 +88,35 @@ const blogPosts = [
 
 const achievements = [
   {
-    title: "SAP Certified Associate — ABAP Cloud",
+    title: "SAP Certified Associate — Back-End Developer — ABAP Cloud",
     issuer: "SAP",
     year: "2025",
     category: "SAP",
     certified: true
   },
   {
-    title: "DSA Using Java",
+    title: "DSA Using Java — Infosys",
     issuer: "Infosys",
     year: "2025",
     category: "Infosys",
     certified: false
   },
   {
-    title: "Java Foundation",
+    title: "Java Foundation Certification — Infosys",
     issuer: "Infosys",
     year: "2025",
     category: "Infosys",
     certified: false
   },
   {
-    title: "DBMS",
+    title: "Database Management Systems — Infosys",
     issuer: "Infosys",
     year: "2025",
     category: "Infosys",
     certified: false
   },
   {
-    title: "Agile Scrum",
+    title: "Agile Scrum in Practice — Infosys",
     issuer: "Infosys",
     year: "2025",
     category: "Infosys",

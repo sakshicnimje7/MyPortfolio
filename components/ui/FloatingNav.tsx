@@ -114,8 +114,6 @@ export default function FloatingNav() {
     };
   }, [isHome, pathname]);
 
-  if (isHome) return null;
-
   return (
     <AnimatePresence>
       {visible && (

@@ -88,7 +88,7 @@ export default function AwwwardsNav({ onNavClick, progress }: AwwwardsNavProps) 
 
     // Smoothly animate the logo position and size without DOM mutations or class toggles
     const logoHeight = 48;
-    const startPadding = 40; // 2.5rem
+    const startPadding = 56; // Adjusted to prevent scroll indicator overlap
     const endPadding = 12; // top: 12px
     const startY = dims.initialHeight - logoHeight - startPadding;
     const endY = endPadding;
@@ -173,15 +173,9 @@ export default function AwwwardsNav({ onNavClick, progress }: AwwwardsNavProps) 
         <div ref={logoRef} className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none">
           <button 
             onClick={() => onNavClick(0)} // Slide 0: Home
-            className="pointer-events-auto relative w-full h-12 flex items-center justify-center"
+            className="pointer-events-auto relative w-full h-12 flex items-center justify-center font-cormorant font-bold text-sm sm:text-base tracking-[0.22em] text-[#3d5e3b] dark:text-[#f7f5ef] uppercase select-none whitespace-nowrap"
           >
-            <Image
-              src="/logo.svg"
-              alt="Sakshi Nimje Logo"
-              width={160}
-              height={40}
-              className="object-contain dark:invert"
-            />
+            Sakshi Nimje
           </button>
         </div>
       </div>
