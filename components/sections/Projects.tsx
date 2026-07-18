@@ -373,7 +373,7 @@ export default function Projects({ initialProjects, active, progress = 0 }: Proj
     <section 
       ref={containerRef}
       id="work" 
-      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df] dark:bg-[#181c17] overflow-hidden"
+      className="relative w-full min-h-screen flex flex-col justify-between py-12 px-6 sm:px-12 bg-[#eae8df]/80 dark:bg-[#111410]/85 backdrop-blur-[2px] overflow-hidden"
     >
       {/* Header bar */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 z-20">

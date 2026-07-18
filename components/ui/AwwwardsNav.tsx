@@ -121,7 +121,7 @@ export default function AwwwardsNav({ onNavClick, progress }: AwwwardsNavProps) 
           />
           {/* Static Background Image for Subsequent Sections */}
           <Image
-            src="/navbar-img.jpg"
+            src="/sections-bg.jpg"
             alt="Scenic Background"
             fill
             sizes="100vw"

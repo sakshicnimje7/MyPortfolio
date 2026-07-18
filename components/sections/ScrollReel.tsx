@@ -284,25 +284,75 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 1: Bio */}
         <div
           ref={panel1Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef] z-10 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/70 dark:bg-[#111410]/85 backdrop-blur-[2px] z-10 py-16 sm:py-0"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-24">
-            <div className="flex flex-col gap-2">
-              <span className="font-cormorant font-light text-4xl sm:text-5xl text-[#3d5e3b]">Hello, I&apos;m</span>
-              <h2 className="font-cormorant font-semibold text-7xl sm:text-8xl text-[#3d5e3b] leading-none">Sakshi</h2>
+          <div className="flex flex-col w-full max-w-6xl px-6 sm:px-12 gap-8 sm:gap-12">
+            
+            {/* Header: Title and Bio */}
+            <div className="grid grid-cols-1 md:grid-cols-12 items-start gap-6 md:gap-12">
+              <div className="md:col-span-5 flex flex-col gap-1.5">
+                <span className="font-dm text-[10px] tracking-[0.15em] text-[#c4862a] uppercase font-bold">
+                  About Me
+                </span>
+                <h2 className="font-cormorant font-semibold text-5xl sm:text-7xl text-[#3d5e3b] dark:text-[#8fa68a] leading-[0.95]">
+                  Sakshi Nimje
+                </h2>
+                <span className="font-dm text-xs text-[#5c7a5a] dark:text-[#a8c4a2] mt-1.5">
+                  SAP Certified ABAP Cloud Developer · Java Full Stack Developer
+                </span>
+              </div>
+              <div className="md:col-span-7 max-w-2xl">
+                <p className="font-dm font-light text-base sm:text-lg text-[#5c7a5a] dark:text-[#a8c4a2] leading-relaxed">
+                  I bridge the gap between enterprise-grade backend stability and high-fidelity frontend motion. As an SAP-certified engineer, I design scalable microservices and build beautiful, interactive web experiences. Currently developing enterprise SAP applications at <strong>VegaH LLC</strong>.
+                </p>
+              </div>
             </div>
-            <div className="max-w-md">
-              <p className="font-dm font-light text-lg sm:text-xl text-[#5c7a5a] leading-relaxed">
-                Full-stack engineer with SAP expertise and a weakness for beautiful motion.
-              </p>
+
+            {/* Structured Resume Info Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full mt-2">
+              
+              {/* Card 1: Enterprise SAP */}
+              <div className="backdrop-blur-md bg-[#eae8df]/40 dark:bg-[#181c17]/40 border border-[#3d5e3b]/10 dark:border-[#8fa68a]/10 rounded-lg p-5 shadow-sm transition-all hover:translate-y-[-2px] hover:border-[#c4862a] duration-300">
+                <div className="text-[18px] text-[#3d5e3b] dark:text-[#8fa68a] mb-2">⚡</div>
+                <h3 className="font-cormorant font-bold text-lg text-[#3d5e3b] dark:text-[#8fa68a] mb-2">
+                  SAP & Cloud Ecosystem
+                </h3>
+                <p className="font-dm font-light text-xs text-[#5c7a5a] dark:text-[#a8c4a2] leading-relaxed">
+                  Expertise in SAP BTP, ABAP Cloud, RAP, and CDS Views. Configuring Cloud Connectors and building business logic dashboards with SAP UI5 interfaces.
+                </p>
+              </div>
+
+              {/* Card 2: Java Full Stack */}
+              <div className="backdrop-blur-md bg-[#eae8df]/40 dark:bg-[#181c17]/40 border border-[#3d5e3b]/10 dark:border-[#8fa68a]/10 rounded-lg p-5 shadow-sm transition-all hover:translate-y-[-2px] hover:border-[#c4862a] duration-300">
+                <div className="text-[18px] text-[#3d5e3b] dark:text-[#8fa68a] mb-2">⚙️</div>
+                <h3 className="font-cormorant font-bold text-lg text-[#3d5e3b] dark:text-[#8fa68a] mb-2">
+                  Backend Architecture
+                </h3>
+                <p className="font-dm font-light text-xs text-[#5c7a5a] dark:text-[#a8c4a2] leading-relaxed">
+                  Designing robust Spring Boot microservices and secure REST APIs with JWT & RBAC. Managing Hibernate/JPA mapping and relational MySQL databases.
+                </p>
+              </div>
+
+              {/* Card 3: Creative Frontend */}
+              <div className="backdrop-blur-md bg-[#eae8df]/40 dark:bg-[#181c17]/40 border border-[#3d5e3b]/10 dark:border-[#8fa68a]/10 rounded-lg p-5 shadow-sm transition-all hover:translate-y-[-2px] hover:border-[#c4862a] duration-300">
+                <div className="text-[18px] text-[#3d5e3b] dark:text-[#8fa68a] mb-2">✨</div>
+                <h3 className="font-cormorant font-bold text-lg text-[#3d5e3b] dark:text-[#8fa68a] mb-2">
+                  Fluid Interactive Web
+                </h3>
+                <p className="font-dm font-light text-xs text-[#5c7a5a] dark:text-[#a8c4a2] leading-relaxed">
+                  Structuring responsive grids and implementing smooth animations with GSAP and Lenis, coupled with React Three Fiber 3D interactive models.
+                </p>
+              </div>
+
             </div>
+
           </div>
         </div>
 
         {/* PANEL 2: SAP Universe */}
         <div
           ref={panel2Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df] z-20 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#eae8df]/75 dark:bg-[#181c17]/85 backdrop-blur-[2px] z-20 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -357,7 +407,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 3: Java Universe */}
         <div
           ref={panel3Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef] z-30 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#f7f5ef]/70 dark:bg-[#111410]/85 backdrop-blur-[2px] z-30 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col sm:flex-row w-full max-w-6xl px-6 sm:px-12 items-center gap-12 sm:gap-8 justify-between">
@@ -418,7 +468,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
         {/* PANEL 4: Stats & CTA */}
         <div
           ref={panel4Ref}
-          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b] z-40 py-16 sm:py-0"
+          className="w-full min-h-screen sm:h-full sm:absolute sm:inset-0 flex items-center justify-center bg-[#3d5e3b]/85 dark:bg-[#1c2a1c]/90 backdrop-blur-[4px] z-40 py-16 sm:py-0"
           style={{ willChange: 'clip-path, opacity' }}
         >
           <div className="flex flex-col items-center text-center gap-10 px-6 max-w-4xl mx-auto">

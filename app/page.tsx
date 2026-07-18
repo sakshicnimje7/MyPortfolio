@@ -205,6 +205,7 @@ export default function Home() {
 
   // Calculate dynamic dimensions for Slide 0 to match AwwwardsNav background box
   const heroProgress = zoomProgress;
+  const contentOpacity = heroProgress >= 0.8 ? Math.max(0, (1 - heroProgress) / 0.2) : 1;
   const isDesktop = viewportSize.w >= 720;
   let currentWidth = viewportSize.w;
   let currentHeight = viewportSize.h;
@@ -326,7 +327,10 @@ export default function Home() {
 
         {/* Slide 0 (Hero Content) constrained inside the expanding frame */}
         <div style={slide0Style}>
-          <main className="w-full h-full flex flex-col md:flex-row items-center justify-center relative py-6 md:py-0">
+          <main 
+            style={{ opacity: contentOpacity }}
+            className="w-full h-full flex flex-col md:flex-row items-center justify-center relative py-6 md:py-0 transition-opacity duration-150"
+          >
             {/* Left Column: Cat Scene */}
             <div className="w-full md:w-1/2 h-[45%] md:h-full relative flex items-center justify-center pt-4 md:pt-0">
               <div className="hidden md:block w-full h-full">
@@ -446,7 +450,10 @@ export default function Home() {
       </div>
 
       {/* 2. Static Single-Page Sections (Scroll naturally after Hero zoom-in finishes) */}
-      <div className="relative w-full z-20 bg-[#f7f5ef] dark:bg-[#111410] border-t border-[#d4d0c4]/45">
+      <div 
+        className="relative w-full z-20 border-t border-[#d4d0c4]/45 bg-cover bg-center bg-no-repeat bg-fixed"
+        style={{ backgroundImage: "url('/sections-bg.jpg')" }}
+      >
         <div id="about" className="relative w-full min-h-screen">
           <ScrollReel />
         </div>
