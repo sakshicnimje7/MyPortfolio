@@ -108,7 +108,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
       gsap.set(p2.querySelectorAll('.panel-bubble'), { opacity: 1, scale: 1 });
 
       gsap.set([p3, p4], {
-        clipPath: 'inset(6% 5% 6% 5% round 20px)',
+        clipPath: 'inset(0% 5% 0% 5% round 0px)',
         opacity: 0,
         pointerEvents: 'none',
       });

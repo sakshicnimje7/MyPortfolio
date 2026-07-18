@@ -524,13 +524,13 @@ export default function Home() {
         className="relative w-full z-20 border-t border-[#d4d0c4]/45 bg-cover bg-center bg-no-repeat bg-fixed"
         style={{ backgroundImage: "url('/sections-bg.jpg')" }}
       >
-        <div id="about" className="relative w-full min-h-screen">
+        <div className="relative w-full min-h-screen">
           <ScrollReel />
         </div>
-        <div id="experience" className="relative w-full min-h-screen">
+        <div className="relative w-full min-h-screen">
           <Experience />
         </div>
-        <div id="work" className="relative w-full min-h-screen">
+        <div className="relative w-full min-h-screen">
           {loading ? (
             <div className="w-full min-h-screen flex items-center justify-center font-mono text-xs opacity-60">
               Loading Selected Work...
@@ -539,10 +539,10 @@ export default function Home() {
             <Projects initialProjects={projects} />
           )}
         </div>
-        <div id="certifications" className="relative w-full min-h-screen">
+        <div className="relative w-full min-h-screen">
           <Certifications />
         </div>
-        <div id="contact" className="relative w-full min-h-screen flex flex-col justify-between">
+        <div className="relative w-full min-h-screen flex flex-col justify-between">
           <div className="flex-1 flex items-center justify-center">
             <Contact />
           </div>
