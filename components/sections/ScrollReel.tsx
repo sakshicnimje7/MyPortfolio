@@ -267,7 +267,7 @@ export default function ScrollReel({ active, progress }: ScrollReelProps = {}) {
   }, { scope: trackRef });
 
   return (
-    <div id="about" ref={trackRef} className="relative z-10 w-full h-auto sm:h-screen sm:overflow-hidden">
+    <div id="about" ref={trackRef} className="relative z-10 w-full sm:w-screen sm:left-1/2 sm:-translate-x-1/2 h-auto sm:h-screen sm:overflow-hidden">
       
       {/* Sticky Screen Viewport (Desktop: GSAP Pinned, Mobile: relative flow) */}
       <div ref={containerRef} className="w-full h-auto sm:h-full flex flex-col relative">
