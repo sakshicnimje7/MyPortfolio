@@ -292,7 +292,6 @@ export default function Home() {
           <div className="slider-indices">
             {[0, 1, 2, 3, 4, 5].map((idx) => {
               const isActive = activeSlide === idx;
-              const indexNum = (idx + 1).toString().padStart(2, '0');
               const targetNames = ['HOME', 'ABOUT', 'EXPERIENCE', 'WORK', 'CERTS', 'CONTACT'];
               return (
                 <p
@@ -306,12 +305,6 @@ export default function Home() {
                   />
                   <span className="opacity-0 group-hover:opacity-100 transition-opacity font-mono text-[9px] mr-2 text-[var(--sage)]">
                     {targetNames[idx]}
-                  </span>
-                  <span
-                    className="index font-medium transition-all"
-                    style={{ opacity: isActive ? 1 : 0.35 }}
-                  >
-                    {indexNum}
                   </span>
                 </p>
               );
@@ -452,9 +445,20 @@ export default function Home() {
           {/* About Me Content morphs inside the card frame */}
           <div 
             style={{ opacity: aboutOpacity, pointerEvents: aboutOpacity > 0.1 ? 'auto' : 'none' }}
-            className="absolute inset-0 w-full h-full flex items-center justify-center bg-[#f7f5ef]/30 dark:bg-[#111410]/45 backdrop-blur-[8px] py-16 sm:py-0 transition-opacity duration-150"
+            className="absolute inset-0 w-full h-full flex items-center justify-center py-16 sm:py-0 transition-opacity duration-150"
           >
-            <div className="flex flex-col w-full max-w-6xl px-6 sm:px-12 gap-8 sm:gap-12">
+            {/* Backdrop Blur layer to blur the underlying 3D scene/hero */}
+            <div className="absolute inset-0 backdrop-blur-[8px]" />
+
+            {/* Crisp Background Image Layer */}
+            <div 
+              className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+              style={{ backgroundImage: "url('/about-bg.jpg')" }}
+            />
+            {/* Theme Adaptive Overlay (No blur, to keep the background image sharp) */}
+            <div className="absolute inset-0 bg-[#f7f5ef]/20 dark:bg-[#111410]/70" />
+
+            <div className="flex flex-col w-full max-w-6xl px-6 sm:px-12 gap-8 sm:gap-12 z-10">
               
               {/* Header: Title and Bio */}
               <div className="grid grid-cols-1 md:grid-cols-12 items-start gap-6 md:gap-12">

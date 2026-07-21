@@ -31,12 +31,6 @@ const experiences: ExperienceItem[] = [
     duration: "May 2025 – Jun 2025",
     tags: ["Linux", "Firewall", "Domain Config", "Enterprise Systems"],
   },
-  {
-    role: "B.Tech Computer Science (SAP)",
-    company: "Parul University",
-    duration: "2023 – 2027",
-    tags: ["DSA", "DBMS", "SAP Specialisation"],
-  },
 ];
 
 function ExperienceCard({ item, index }: { item: ExperienceItem; index: number }) {
